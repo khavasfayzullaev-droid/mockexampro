@@ -22,6 +22,7 @@ import {
   defaultExam,
   examToJSON,
 } from "./types";
+import { uploadAsset } from "@/utils/supabase/upload";
 
 const STORAGE_KEY = "listening_exam_v2";
 
@@ -112,21 +113,25 @@ function Step1GeneralSettings({
     setExam((prev) => ({ ...prev, settings: { ...prev.settings, ...patch } }));
 
   const handleAudio = useCallback(
-    (file: File) => {
-      if (exam.audioUrl) URL.revokeObjectURL(exam.audioUrl);
-      const url = URL.createObjectURL(file);
-      const tmp = new Audio(url);
-      tmp.addEventListener("loadedmetadata", () => {
-        setExam((prev) => ({
-          ...prev,
-          audioFile: file,
-          audioUrl: url,
-          audioName: file.name,
-          audioDuration: tmp.duration,
-        }));
-      });
+    async (file: File) => {
+      try {
+        setExam((prev) => ({ ...prev, audioName: "Yuklanmoqda..." }));
+        const url = await uploadAsset(file, "listening");
+        const tmp = new Audio(url);
+        tmp.addEventListener("loadedmetadata", () => {
+          setExam((prev) => ({
+            ...prev,
+            audioFile: null,
+            audioUrl: url,
+            audioName: file.name,
+            audioDuration: tmp.duration,
+          }));
+        });
+      } catch (err: any) {
+        alert("Xatolik: " + err.message);
+      }
     },
-    [exam.audioUrl, setExam]
+    [setExam]
   );
 
   const isCEFR = s.examType === "CEFR_MULTI";
@@ -441,22 +446,27 @@ function Step2Sections({
       return { ...prev, sections: arr };
     });
 
-  const handleSectionAudio = (idx: number, file: File) => {
-    const url = URL.createObjectURL(file);
-    const tmp = new Audio(url);
-    tmp.addEventListener("loadedmetadata", () => {
-      updateSection(idx, {
-        audioFile: file,
-        audioUrl: url,
-        audioName: file.name,
-        audioDuration: tmp.duration,
+  const handleSectionAudio = async (idx: number, file: File) => {
+    try {
+      updateSection(idx, { audioName: "Yuklanmoqda..." });
+      const url = await uploadAsset(file, "listening");
+      const tmp = new Audio(url);
+      tmp.addEventListener("loadedmetadata", () => {
+        updateSection(idx, {
+          audioFile: null,
+          audioUrl: url,
+          audioName: file.name,
+          audioDuration: tmp.duration,
+        });
       });
-    });
+    } catch (err: any) { alert("Xatolik: " + err.message); }
   };
 
-  const handleSectionImage = (idx: number, file: File) => {
-    const url = URL.createObjectURL(file);
-    updateSection(idx, { imageFile: file, imageUrl: url });
+  const handleSectionImage = async (idx: number, file: File) => {
+    try {
+      const url = await uploadAsset(file, "listening");
+      updateSection(idx, { imageFile: null, imageUrl: url });
+    } catch (err: any) { alert("Xatolik: " + err.message); }
   };
 
   return (
@@ -894,11 +904,13 @@ function MapLabelEditor({ q, onChange }: { q: MapLabelQuestion; onChange: (q: Ma
         type="file"
         accept="image/*"
         className="hidden"
-        onChange={(e) => {
+        onChange={async (e) => {
           const f = e.target.files?.[0];
           if (f) {
-            const url = URL.createObjectURL(f);
-            onChange({ ...q, imageFile: f, imageUrl: url });
+            try {
+              const url = await uploadAsset(f, "listening");
+              onChange({ ...q, imageFile: null, imageUrl: url });
+            } catch (err: any) { alert("Xatolik: " + err.message); }
           }
         }}
       />

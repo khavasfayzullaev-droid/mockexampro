@@ -71,3 +71,25 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+
+-- ==============================================
+-- STORAGE CONFIGURATION (For Exam Assets)
+-- ==============================================
+
+-- Create a new public bucket for exam files (audios, images)
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('exam-assets', 'exam-assets', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Grant public read access to everyone
+CREATE POLICY "Public Read Access for Exam Assets" 
+  ON storage.objects FOR SELECT 
+  USING (bucket_id = 'exam-assets');
+
+-- Allow authenticated users (teachers) to upload files
+CREATE POLICY "Authenticated users can upload exam assets" 
+  ON storage.objects FOR INSERT 
+  WITH CHECK (
+    auth.role() = 'authenticated' AND 
+    bucket_id = 'exam-assets'
+  );

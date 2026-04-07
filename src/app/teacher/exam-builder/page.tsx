@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import ListeningPanel from "./ListeningPanel";
 import ReadingPanel from "./ReadingPanel";
 import WritingPanel from "./WritingPanel";
@@ -35,7 +37,85 @@ function ComingSoonPanel({ title }: { title: string }) {
 /* ───────────── Main Page ───────────── */
 export default function ExamBuilderPage() {
   const [activeTab, setActiveTab] = useState<Tab>("Listening");
-  const [examTitle] = useState("Mid-Term Proficiency Exam");
+  const [examTitle, setExamTitle] = useState("Mock Exam #1");
+  const [isPublishing, setIsPublishing] = useState(false);
+  const router = useRouter();
+
+  const handlePublish = async () => {
+    setIsPublishing(true);
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Seans tugagan. Iltimos qayta login qiling.");
+
+      // 1. Create main Exam record
+      const { data: examData, error: examErr } = await supabase
+        .from("exams")
+        .insert({
+          title: examTitle,
+          teacher_id: user.id,
+          duration_minutes: 180,
+          is_active: true
+        })
+        .select()
+        .single();
+        
+      if (examErr) throw examErr;
+
+      // 2. Extract Drafts from localStorage
+      const getDraft = (key: string) => {
+        try {
+          const d = localStorage.getItem(key);
+          return d ? JSON.parse(d) : null;
+        } catch { return null; }
+      };
+      
+      const parts = [
+        { key: 'listening_exam_v2', section: 'listening' },
+        { key: 'reading_exam_v2', section: 'reading' },
+        { key: 'writing_exam_v2', section: 'writing' },
+        { key: 'speaking_exam_v2', section: 'speaking' },
+      ];
+
+      const questionsToInsert = parts.map((p, index) => {
+        const draft = getDraft(p.key);
+        // We only insert if the draft has actual content (parts/sections)
+        const hasContent = draft && (
+          (draft.sections && draft.sections.length > 0) || 
+          (draft.parts && draft.parts.length > 0) ||
+          (draft.tasks && draft.tasks.length > 0)
+        );
+
+        return hasContent ? {
+          exam_id: examData.id,
+          section: p.section,
+          question_type: 'exam_section_v1',
+          content: draft,
+          order_index: index + 1
+        } : null;
+      }).filter(Boolean);
+
+      if (questionsToInsert.length === 0) {
+        // Rollback just in case
+        await supabase.from("exams").delete().eq("id", examData.id);
+        throw new Error("Hech qanday bo'lim to'ldirilmagan. Kamida 1 ta qism qo'shing.");
+      }
+
+      // 3. Bulk insert sections
+      const { error: insErr } = await supabase.from("questions").insert(questionsToInsert);
+      if (insErr) throw insErr;
+
+      // 4. Clean Drafts
+      parts.forEach(p => localStorage.removeItem(p.key));
+      
+      alert("✅ Imtihon muvaffaqiyatli nashr etildi!");
+      router.push("/teacher"); // Go back to teacher dashboard / library
+    } catch (err: any) {
+      alert("Xatolik yuz berdi: " + err.message);
+    } finally {
+      setIsPublishing(false);
+    }
+  };
 
   return (
     <div className="animate-in fade-in duration-500">
@@ -46,14 +126,28 @@ export default function ExamBuilderPage() {
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">
               {"EXAM BUILDER"}
             </span>
-            <h2 className="text-2xl font-extrabold font-headline text-on-surface">{examTitle}</h2>
+            <input 
+              value={examTitle}
+              onChange={(e) => setExamTitle(e.target.value)}
+              className="text-2xl font-extrabold font-headline text-on-surface bg-transparent border-none outline-none focus:bg-surface-container-high focus:px-3 focus:rounded-xl transition-all w-full max-w-sm"
+              placeholder="Imtihon nomi..."
+            />
           </div>
           <div className="flex gap-3">
-            <button className="px-5 py-2.5 rounded-xl bg-surface-container-highest text-on-surface font-semibold text-sm hover:opacity-90 transition-all active:scale-95">
-              {"Preview"}
+            <button className="px-5 py-2.5 rounded-xl bg-surface-container-highest text-on-surface font-semibold text-sm hover:opacity-90 transition-all active:scale-95 flex items-center gap-2">
+              <span className="material-symbols-outlined text-sm">{"visibility"}</span>{"Preview"}
             </button>
-            <button className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-primary to-primary-container text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all active:scale-95">
-              {"Publish Exam"}
+            <button 
+              onClick={handlePublish}
+              disabled={isPublishing}
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-primary to-primary-container text-white font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+            >
+              {isPublishing ? (
+                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <span className="material-symbols-outlined text-sm">{"publish"}</span>
+              )}
+              {isPublishing ? "Saqlanmoqda..." : "Publish Exam"}
             </button>
           </div>
         </div>

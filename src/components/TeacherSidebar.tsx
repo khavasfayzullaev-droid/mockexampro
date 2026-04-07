@@ -7,6 +7,7 @@ export default function TeacherSidebar() {
   const links = [
     { name: "Dashboard", href: "/teacher", icon: "dashboard" },
     { name: "My Groups", href: "/teacher/groups", icon: "group" },
+    { name: "My Exams", href: "/teacher/my-exams", icon: "folder_open" },
     { name: "Exam Constructor", href: "/teacher/exam-builder", icon: "edit_note" },
     { name: "Grading Center", href: "/teacher/grading", icon: "fact_check" },
   ];

@@ -73,6 +73,13 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
           <span className="font-inter text-[10px] font-bold uppercase mt-1">Guruhlar</span>
         </Link>
         <Link 
+            href="/teacher/my-exams" 
+            className={`flex flex-col items-center justify-center rounded-xl px-3 py-1 tap-highlight-transparent ${pathname.includes('my-exams') ? 'text-primary bg-primary/10' : 'text-on-surface-variant hover:text-primary'}`}
+        >
+          <span className="material-symbols-outlined text-[24px]">folder_open</span>
+          <span className="font-inter text-[10px] font-bold uppercase mt-1">Kutubxona</span>
+        </Link>
+        <Link 
             href="/teacher/exam-builder" 
             className={`flex flex-col items-center justify-center rounded-xl px-3 py-1 tap-highlight-transparent ${pathname.includes('exam-builder') ? 'text-primary bg-primary/10' : 'text-on-surface-variant hover:text-primary'}`}
         >

@@ -16,6 +16,7 @@ import {
   createIELTSSpeaking,
   formatSeconds,
 } from "./speakingTypes";
+import { uploadAsset } from "@/utils/supabase/upload";
 
 const STORAGE_KEY = "speaking_exam_v2";
 
@@ -168,9 +169,12 @@ function SStep1({ exam, setExam, onNext }: { exam: SpeakingExam; setExam: React.
 function QuestionCard({ q, index, onChange, onDelete }: { q: SpeakingQuestion; index: number; onChange: (q: SpeakingQuestion) => void; onDelete: () => void }) {
   const audioRef = useRef<HTMLInputElement>(null);
 
-  const handleAudio = (file: File) => {
-    const url = URL.createObjectURL(file);
-    onChange({ ...q, audioFile: file, audioUrl: url, audioName: file.name });
+  const handleAudio = async (file: File) => {
+    try {
+      onChange({ ...q, audioName: "Yuklanmoqda..." });
+      const url = await uploadAsset(file, "speaking");
+      onChange({ ...q, audioFile: null, audioUrl: url, audioName: file.name });
+    } catch (err: any) { alert("Xatolik: " + err.message); }
   };
 
   return (
@@ -337,7 +341,7 @@ function SStep2({ exam, setExam, onNext, onBack }: { exam: SpeakingExam; setExam
                   <label className="block border-2 border-dashed border-outline-variant/30 rounded-xl p-6 text-center cursor-pointer hover:border-tertiary/40 transition-all mb-4">
                     <span className="material-symbols-outlined text-outline text-2xl">{"image"}</span>
                     <p className="text-xs text-outline mt-1">{"Cue Card rasmi (ixtiyoriy)"}</p>
-                    <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) { const url = URL.createObjectURL(f); updatePart(activePart, { imageFile: f, imageUrl: url }); } }} />
+                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; if (f) { try { const url = await uploadAsset(f, "speaking"); updatePart(activePart, { imageFile: null, imageUrl: url }); } catch(err:any) { alert("Xato: " + err.message); } } }} />
                   </label>
                 )}
                 {/* Bullet points */}

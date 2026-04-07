@@ -16,6 +16,7 @@ import {
   defaultWritingExam,
   getTaskTypesForExam,
 } from "./writingTypes";
+import { uploadAsset } from "@/utils/supabase/upload";
 
 const STORAGE_KEY = "writing_exam_v2";
 
@@ -244,9 +245,11 @@ function WStep2({
     setActiveTask(exam.tasks.length);
   };
 
-  const handleImage = (file: File) => {
-    const url = URL.createObjectURL(file);
-    updateTask(activeTask, { imageFile: file, imageUrl: url });
+  const handleImage = async (file: File) => {
+    try {
+      const url = await uploadAsset(file, "writing");
+      updateTask(activeTask, { imageFile: null, imageUrl: url });
+    } catch (err: any) { alert("Xatolik: " + err.message); }
   };
 
   const task = exam.tasks[activeTask];

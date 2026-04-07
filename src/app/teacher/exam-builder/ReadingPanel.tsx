@@ -15,6 +15,7 @@ import {
   createReadingSection,
   defaultReadingExam,
 } from "./readingTypes";
+import { uploadAsset } from "@/utils/supabase/upload";
 
 const STORAGE_KEY = "reading_exam_v2";
 
@@ -379,11 +380,13 @@ function ReadingStep2({
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const f = e.target.files?.[0];
                       if (f) {
-                        const url = URL.createObjectURL(f);
-                        updateSection(activeIdx, { imageFile: f, imageUrl: url });
+                        try {
+                          const url = await uploadAsset(f, "reading");
+                          updateSection(activeIdx, { imageFile: null, imageUrl: url });
+                        } catch (err: any) { alert("Xato: " + err.message); }
                       }
                     }}
                   />
