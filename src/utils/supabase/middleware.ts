@@ -54,9 +54,11 @@ export async function updateSession(request: NextRequest) {
     }
 
     if (role === 'teacher' && request.nextUrl.pathname.startsWith('/dashboard')) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/teacher'
-      return NextResponse.redirect(url)
+      if (!request.nextUrl.pathname.startsWith('/dashboard/exam')) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/teacher'
+        return NextResponse.redirect(url)
+      }
     }
   }
 
