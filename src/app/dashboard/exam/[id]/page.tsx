@@ -108,15 +108,108 @@ export default function ExamPreviewPage() {
              <p>This is a simulated exam preview. The actual questions fetched from the database would be displayed here.</p>
              <p><strong>Exam Type:</strong> {exam.type?.toUpperCase() || "MOCK EXAM"}</p>
              <hr />
-             <div className="space-y-4">
-               {exam.questions?.map((q: any, idx: number) => (
-                 <div key={idx} className="bg-white p-4 rounded-xl border border-outline-variant/30">
-                   <p className="font-bold text-primary mb-2">Q{idx + 1}</p>
-                   <pre className="text-sm font-sans whitespace-pre-wrap">{JSON.stringify(q.content, null, 2)}</pre>
-                 </div>
-               ))}
-               {exam.questions?.length === 0 && (
-                 <p className="text-on-surface-variant italic">No questions found for this exam draft.</p>
+             <div className="space-y-10">
+               {exam.questions?.length === 0 ? (
+                 <p className="text-on-surface-variant italic text-center py-10">No questions found for this exam draft.</p>
+               ) : (
+                 exam.questions?.map((q: any) => (
+                   <div key={q.id} className="bg-white p-6 rounded-2xl border border-outline-variant/30 shadow-sm">
+                     <div className="flex items-center justify-between border-b border-outline-variant/20 pb-4 mb-4">
+                       <h2 className="font-extrabold text-xl font-headline uppercase tracking-wide text-primary">
+                         {q.section} Section
+                       </h2>
+                       {q.content?.audioUrl && (
+                         <audio src={q.content.audioUrl} controls className="h-8 shadow-sm rounded-lg" />
+                       )}
+                     </div>
+
+                     {(q.section === 'listening' || q.section === 'reading') && (
+                       <div className="space-y-8">
+                         {q.content?.sections?.map((sec: any, sIdx: number) => (
+                           <div key={sec.id} className="bg-surface-container-lowest p-5 rounded-2xl border border-slate-100">
+                             <div className="flex items-center gap-3 mb-3">
+                               <span className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">{sIdx + 1}</span>
+                               <h4 className="font-bold text-lg">{sec.title}</h4>
+                             </div>
+                             {sec.instruction && <p className="text-sm text-on-surface-variant italic mb-4 bg-slate-50 p-3 rounded-xl border border-slate-200">"{sec.instruction}"</p>}
+                             {sec.audioUrl && <audio src={sec.audioUrl} controls className="h-8 max-w-[250px] mb-4" />}
+                             {sec.imageUrl && <img src={sec.imageUrl} alt="section" className="rounded-xl mb-4 max-h-64 object-contain shadow-sm border border-slate-100" />}
+
+                             <div className="space-y-4 pl-0 sm:pl-11 mt-4">
+                               {sec.questions?.map((question: any, qIdx: number) => (
+                                 <div key={question.id} className="p-4 bg-surface-container-low/50 rounded-xl border border-outline-variant/20">
+                                   <p className="font-semibold text-sm mb-3">
+                                     <span className="text-primary mr-2 font-bold">{qIdx + 1}.</span>
+                                     {question.text}
+                                   </p>
+                                   
+                                   {question.type === 'MCQ' && (
+                                     <div className="space-y-2 pl-5 mt-2">
+                                       {question.options?.map((opt: any) => (
+                                         <label key={opt.id} className="flex items-center gap-3 text-sm cursor-not-allowed group">
+                                           <div className="w-4 h-4 rounded-full border border-slate-300 flex-shrink-0 group-hover:bg-slate-200"></div>
+                                           <span><strong className="text-slate-500 mr-1">{opt.label})</strong> {opt.text}</span>
+                                         </label>
+                                       ))}
+                                     </div>
+                                   )}
+                                   
+                                   {question.type === 'GAP_FILL' && (
+                                     <div className="pl-5 mt-2 text-sm">
+                                       <input placeholder="Your Answer..." disabled className="bg-white px-3 py-2 rounded-lg border border-slate-200 text-xs w-full max-w-sm disabled:opacity-70 disabled:bg-slate-50" />
+                                     </div>
+                                   )}
+                                 </div>
+                               ))}
+                             </div>
+                           </div>
+                         ))}
+                       </div>
+                     )}
+
+                     {q.section === 'writing' && (
+                       <div className="space-y-6">
+                         {q.content?.tasks?.map((task: any, tIdx: number) => (
+                           <div key={task.id} className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                             <div className="flex items-center justify-between mb-4">
+                               <h4 className="font-bold text-lg flex items-center gap-2">
+                                  <span className="w-8 h-8 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center font-bold">W{tIdx + 1}</span>
+                                  {task.type === 'TASK1' ? "Writing Task 1" : "Writing Task 2"}
+                               </h4>
+                               <span className="text-xs font-bold text-outline uppercase">Min: {task.minWords} words</span>
+                             </div>
+                             {task.imageUrl && <img src={task.imageUrl} className="rounded-xl mb-4 max-h-64 shadow-sm object-contain bg-white border border-slate-200 p-2" />}
+                             <p className="text-sm font-medium whitespace-pre-wrap leading-relaxed px-2 border-l-4 border-secondary/50">{task.text}</p>
+                           </div>
+                         ))}
+                       </div>
+                     )}
+
+                     {q.section === 'speaking' && (
+                       <div className="space-y-6">
+                         {q.content?.parts?.map((part: any, pIdx: number) => (
+                           <div key={part.id} className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                             <h4 className="font-bold text-lg mb-4 flex items-center gap-2">
+                                <span className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">S{pIdx + 1}</span>
+                                {part.title}
+                             </h4>
+                             {part.imageFileUrl && <img src={part.imageFileUrl} className="rounded-xl mb-4 max-h-48 border border-slate-200 p-1 bg-white" />}
+                             {part.audioFileUrl && <audio src={part.audioFileUrl} controls className="h-8 max-w-[250px] mb-4" />}
+                             
+                             <div className="space-y-3 mt-4">
+                               {part.questions?.map((question: any, idx: number) => (
+                                 <div key={question.id} className="bg-white p-3 rounded-lg border border-outline-variant/30 flex gap-3 text-sm font-medium">
+                                   <span className="text-primary font-bold">{idx + 1}.</span>
+                                   <span className="whitespace-pre-wrap">{question.text}</span>
+                                 </div>
+                               ))}
+                             </div>
+                           </div>
+                         ))}
+                       </div>
+                     )}
+                   </div>
+                 ))
                )}
              </div>
            </div>
