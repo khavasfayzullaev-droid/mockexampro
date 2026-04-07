@@ -106,7 +106,7 @@ export default function ExamPreviewPage() {
            <div className="p-8 flex-1 overflow-y-auto prose prose-slate">
              <h3>Instructions</h3>
              <p>This is a simulated exam preview. The actual questions fetched from the database would be displayed here.</p>
-             <p><strong>Exam Type:</strong> {exam.type.toUpperCase()}</p>
+             <p><strong>Exam Type:</strong> {exam.type?.toUpperCase() || "MOCK EXAM"}</p>
              <hr />
              <div className="space-y-4">
                {exam.questions?.map((q: any, idx: number) => (
