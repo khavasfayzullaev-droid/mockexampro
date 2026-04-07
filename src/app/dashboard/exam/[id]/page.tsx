@@ -65,98 +65,114 @@ export default function ExamPreviewPage() {
   }
 
   return (
-    <div className="bg-surface font-body text-on-surface min-h-screen flex flex-col pt-8 pb-20 px-4 sm:px-12 animate-in fade-in duration-700">
+    <div className="bg-[#f7f9fb] font-sans text-[#2a3439] min-h-screen flex flex-col pt-6 pb-20 px-4 sm:px-12 animate-in fade-in duration-700">
       
-      {/* Header */}
-      <div className="max-w-5xl mx-auto w-full flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
-          <Link href="/dashboard" className="w-10 h-10 rounded-full border border-outline-variant/30 flex items-center justify-center hover:bg-surface-container transition-colors text-on-surface">
+      {/* Sticky Header with Glassmorphism */}
+      <div className="sticky top-4 z-50 max-w-6xl mx-auto w-full flex items-center justify-between mb-10 bg-[#f7f9fb]/80 backdrop-blur-2xl rounded-2xl p-4 shadow-[0_8px_32px_rgba(42,52,57,0.04)] border border-[#a9b4b9]/15">
+        <div className="flex items-center gap-6">
+          <Link href="/dashboard" className="w-12 h-12 rounded-full border border-[#a9b4b9]/30 flex items-center justify-center hover:bg-white transition-colors text-[#566166]">
             <span className="material-symbols-outlined">arrow_back</span>
           </Link>
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded-full mb-1 inline-block">Preview Mode</span>
-            <h1 className="text-2xl font-headline font-extrabold">{exam.title}</h1>
+          <div className="flex flex-col">
+            <span className="text-[11px] font-bold uppercase tracking-[0.05em] text-[#565e74] bg-[#dae2fd]/50 px-3 py-1 rounded-full mb-1 w-max">Mock Exam Preview</span>
+            <h1 className="text-2xl font-bold tracking-tight text-[#2a3439]">{exam.title}</h1>
           </div>
         </div>
-        <div className="flex items-center gap-4">
-           <div className="bg-error/10 text-error px-4 py-2 rounded-xl border border-error/20 flex items-center gap-2 font-bold text-sm">
+        <div className="flex items-center gap-5">
+           <div className="bg-white/50 text-[#894d00] px-5 py-2.5 rounded-xl border border-[#a9b4b9]/20 flex items-center gap-2 font-bold text-sm shadow-sm backdrop-blur-md">
              <span className="material-symbols-outlined">timer</span>
              60:00
            </div>
            <button 
              onClick={handleSubmit} 
              disabled={isSubmitting}
-             className="bg-primary text-white px-6 py-2 rounded-xl font-bold hover:shadow-lg active:scale-95 transition-all outline-none"
+             className="bg-gradient-to-br from-[#565e74] to-[#4a5268] text-white px-8 py-3 rounded-xl font-medium tracking-wide hover:shadow-[0_8px_24px_rgba(86,94,116,0.3)] active:scale-95 transition-all outline-none disabled:opacity-70"
            >
-             {isSubmitting ? "Yuborilmoqda..." : "Yuborish"}
+             {isSubmitting ? "Sumbitting..." : "Finish Exam"}
            </button>
         </div>
       </div>
 
-      {/* Split Window Layout (Simulated Reading/Writing setup) */}
-      <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col lg:flex-row gap-6 h-[calc(100vh-160px)]">
+      {/* Main Split Layout */}
+      <div className="max-w-6xl mx-auto w-full flex-1 flex flex-col lg:flex-row gap-8 min-h-[calc(100vh-180px)]">
          
-         {/* Left Panel (Content/Passage) */}
-         <div className="flex-1 bg-surface-container-low rounded-2xl border border-outline-variant/30 overflow-hidden flex flex-col shadow-inner">
-           <div className="bg-surface border-b border-outline-variant/20 p-4">
-             <h3 className="font-bold text-sm text-on-surface-variant flex items-center gap-2">
-               <span className="material-symbols-outlined text-base">menu_book</span> Reading Passage or Question Prompts
-             </h3>
-           </div>
-           <div className="p-8 flex-1 overflow-y-auto prose prose-slate">
-             <h3>Instructions</h3>
-             <p>This is a simulated exam preview. The actual questions fetched from the database would be displayed here.</p>
-             <p><strong>Exam Type:</strong> {exam.type?.toUpperCase() || "MOCK EXAM"}</p>
-             <hr />
-             <div className="space-y-10">
+         {/* Left Panel: Content / Reading Passage */}
+         <div className="flex-[5] bg-[#f0f4f7] rounded-[2rem] border border-[#a9b4b9]/15 overflow-hidden flex flex-col pt-2 shadow-inner">
+           <div className="p-8 flex-1 overflow-y-auto">
+             
+             <div className="mb-10 text-center space-y-3">
+                <p className="text-[#566166] text-sm tracking-wide uppercase font-semibold">Section Viewer</p>
+                <div className="h-0.5 w-12 bg-[#dae2fd] mx-auto rounded-full"></div>
+             </div>
+
+             <div className="space-y-12">
                {exam.questions?.length === 0 ? (
-                 <p className="text-on-surface-variant italic text-center py-10">No questions found for this exam draft.</p>
+                 <p className="text-[#566166] italic text-center py-20">No question data found.</p>
                ) : (
                  exam.questions?.map((q: any) => (
-                   <div key={q.id} className="bg-white p-6 rounded-2xl border border-outline-variant/30 shadow-sm">
-                     <div className="flex items-center justify-between border-b border-outline-variant/20 pb-4 mb-4">
-                       <h2 className="font-extrabold text-xl font-headline uppercase tracking-wide text-primary">
-                         {q.section} Section
+                   <div key={q.id} className="bg-white p-8 rounded-[1.5rem] shadow-[0_8px_32px_rgba(42,52,57,0.06)] border border-[#a9b4b9]/10">
+                     <div className="flex items-center justify-between border-b border-[#f0f4f7] pb-6 mb-8">
+                       <h2 className="font-bold text-2xl tracking-tight uppercase text-[#2a3439]">
+                         {q.section}
                        </h2>
                        {q.content?.audioUrl && (
-                         <audio src={q.content.audioUrl} controls className="h-8 shadow-sm rounded-lg" />
+                         <div className="bg-[#f0f4f7] p-2 rounded-xl flex items-center shadow-sm">
+                           <audio src={q.content.audioUrl} controls className="h-10 outline-none" />
+                         </div>
                        )}
                      </div>
 
+                     {/* Listening & Reading Renderer */}
                      {(q.section === 'listening' || q.section === 'reading') && (
-                       <div className="space-y-8">
+                       <div className="space-y-12">
                          {q.content?.sections?.map((sec: any, sIdx: number) => (
-                           <div key={sec.id} className="bg-surface-container-lowest p-5 rounded-2xl border border-slate-100">
-                             <div className="flex items-center gap-3 mb-3">
-                               <span className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">{sIdx + 1}</span>
-                               <h4 className="font-bold text-lg">{sec.title}</h4>
+                           <div key={sec.id} className="bg-[#f7f9fb] p-6 lg:p-8 rounded-[1.25rem] border border-[#e1e9ee]">
+                             <div className="flex items-center gap-4 mb-4">
+                               <div className="w-10 h-10 rounded-xl bg-[#dae2fd] text-[#565e74] flex items-center justify-center font-bold text-lg">{sIdx + 1}</div>
+                               <h4 className="font-bold text-[1.15rem] leading-snug">{sec.title}</h4>
                              </div>
-                             {sec.instruction && <p className="text-sm text-on-surface-variant italic mb-4 bg-slate-50 p-3 rounded-xl border border-slate-200">"{sec.instruction}"</p>}
-                             {sec.audioUrl && <audio src={sec.audioUrl} controls className="h-8 max-w-[250px] mb-4" />}
-                             {sec.imageUrl && <img src={sec.imageUrl} alt="section" className="rounded-xl mb-4 max-h-64 object-contain shadow-sm border border-slate-100" />}
+                             
+                             {sec.instruction && (
+                               <div className="bg-white text-[#566166] text-sm leading-relaxed p-4 rounded-xl border border-[#e1e9ee] shadow-sm mb-6 font-medium italic">
+                                 {sec.instruction}
+                               </div>
+                             )}
+                             
+                             {sec.audioUrl && (
+                               <div className="mb-6 bg-white p-2 inline-block rounded-xl shadow-sm border border-[#e1e9ee]">
+                                 <audio src={sec.audioUrl} controls className="h-10" />
+                               </div>
+                             )}
+                             
+                             {sec.imageUrl && (
+                               <div className="mb-6 p-2 bg-white rounded-xl border border-[#e1e9ee] shadow-sm inline-block">
+                                 <img src={sec.imageUrl} alt="section" className="rounded-lg max-h-[18rem] object-contain" />
+                               </div>
+                             )}
 
-                             <div className="space-y-4 pl-0 sm:pl-11 mt-4">
+                             {/* Questions Map */}
+                             <div className="space-y-4 pl-0 sm:pl-14 mt-6">
                                {sec.questions?.map((question: any, qIdx: number) => (
-                                 <div key={question.id} className="p-4 bg-surface-container-low/50 rounded-xl border border-outline-variant/20">
-                                   <p className="font-semibold text-sm mb-3">
-                                     <span className="text-primary mr-2 font-bold">{qIdx + 1}.</span>
+                                 <div key={question.id} className="p-5 bg-white rounded-xl shadow-sm border border-[#e1e9ee] transition-all hover:shadow-md">
+                                   <p className="font-semibold text-base mb-4 text-[#2a3439] leading-relaxed">
+                                     <span className="text-[#565e74] mr-2 font-bold w-6 inline-block">{qIdx + 1}.</span>
                                      {question.text}
                                    </p>
                                    
                                    {question.type === 'MCQ' && (
-                                     <div className="space-y-2 pl-5 mt-2">
+                                     <div className="space-y-3 pl-8 mt-4">
                                        {question.options?.map((opt: any) => (
-                                         <label key={opt.id} className="flex items-center gap-3 text-sm cursor-not-allowed group">
-                                           <div className="w-4 h-4 rounded-full border border-slate-300 flex-shrink-0 group-hover:bg-slate-200"></div>
-                                           <span><strong className="text-slate-500 mr-1">{opt.label})</strong> {opt.text}</span>
+                                         <label key={opt.id} className="flex items-center gap-4 text-[0.95rem] cursor-not-allowed group">
+                                           <div className="w-5 h-5 rounded-full border-[1.5px] border-[#a9b4b9] flex-shrink-0 group-hover:bg-[#f0f4f7] transition-colors"></div>
+                                           <span className="text-[#566166]"><strong className="text-[#2a3439] mr-2">{opt.label})</strong> {opt.text}</span>
                                          </label>
                                        ))}
                                      </div>
                                    )}
                                    
                                    {question.type === 'GAP_FILL' && (
-                                     <div className="pl-5 mt-2 text-sm">
-                                       <input placeholder="Your Answer..." disabled className="bg-white px-3 py-2 rounded-lg border border-slate-200 text-xs w-full max-w-sm disabled:opacity-70 disabled:bg-slate-50" />
+                                     <div className="pl-8 mt-4">
+                                       <input placeholder="Type answer..." disabled className="bg-[#f7f9fb] px-4 py-3 rounded-lg border border-[#e1e9ee] text-sm w-full max-w-sm disabled:opacity-80 focus:outline-none focus:ring-2 focus:ring-[#dae2fd] transition-all" />
                                      </div>
                                    )}
                                  </div>
@@ -167,40 +183,56 @@ export default function ExamPreviewPage() {
                        </div>
                      )}
 
+                     {/* Writing Renderer */}
                      {q.section === 'writing' && (
-                       <div className="space-y-6">
+                       <div className="space-y-8">
                          {q.content?.tasks?.map((task: any, tIdx: number) => (
-                           <div key={task.id} className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                             <div className="flex items-center justify-between mb-4">
-                               <h4 className="font-bold text-lg flex items-center gap-2">
-                                  <span className="w-8 h-8 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center font-bold">W{tIdx + 1}</span>
+                           <div key={task.id} className="bg-[#f7f9fb] p-8 rounded-[1.25rem] border border-[#e1e9ee]">
+                             <div className="flex items-center justify-between mb-6">
+                               <h4 className="font-bold text-[1.15rem] flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-xl bg-[#e8eff3] text-[#526075] flex items-center justify-center font-bold">W{tIdx + 1}</div>
                                   {task.type === 'TASK1' ? "Writing Task 1" : "Writing Task 2"}
                                </h4>
-                               <span className="text-xs font-bold text-outline uppercase">Min: {task.minWords} words</span>
+                               <span className="text-[11px] px-3 py-1 bg-white border border-[#e1e9ee] rounded-full font-bold text-[#566166] uppercase tracking-wider">Min: {task.minWords} words</span>
                              </div>
-                             {task.imageUrl && <img src={task.imageUrl} className="rounded-xl mb-4 max-h-64 shadow-sm object-contain bg-white border border-slate-200 p-2" />}
-                             <p className="text-sm font-medium whitespace-pre-wrap leading-relaxed px-2 border-l-4 border-secondary/50">{task.text}</p>
+                             {task.imageUrl && (
+                               <div className="mb-6 p-3 bg-white rounded-xl border border-[#e1e9ee] shadow-sm max-w-max">
+                                 <img src={task.imageUrl} className="rounded-lg max-h-[18rem] object-contain" />
+                               </div>
+                             )}
+                             <div className="bg-white p-5 rounded-xl border border-[#e1e9ee] shadow-sm">
+                               <p className="text-[0.95rem] text-[#2a3439] font-medium whitespace-pre-wrap leading-relaxed border-l-[3px] border-[#dae2fd] pl-4">{task.text}</p>
+                             </div>
                            </div>
                          ))}
                        </div>
                      )}
 
+                     {/* Speaking Renderer */}
                      {q.section === 'speaking' && (
-                       <div className="space-y-6">
+                       <div className="space-y-8">
                          {q.content?.parts?.map((part: any, pIdx: number) => (
-                           <div key={part.id} className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                             <h4 className="font-bold text-lg mb-4 flex items-center gap-2">
-                                <span className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">S{pIdx + 1}</span>
-                                {part.title}
-                             </h4>
-                             {part.imageFileUrl && <img src={part.imageFileUrl} className="rounded-xl mb-4 max-h-48 border border-slate-200 p-1 bg-white" />}
-                             {part.audioFileUrl && <audio src={part.audioFileUrl} controls className="h-8 max-w-[250px] mb-4" />}
+                           <div key={part.id} className="bg-[#f7f9fb] p-8 rounded-[1.25rem] border border-[#e1e9ee]">
+                             <div className="flex items-center gap-3 mb-6">
+                                <div className="w-10 h-10 rounded-xl bg-[#dae2fd] text-[#565e74] flex items-center justify-center font-bold">S{pIdx + 1}</div>
+                                <h4 className="font-bold text-[1.15rem]">{part.title}</h4>
+                             </div>
+                             {part.imageFileUrl && (
+                               <div className="mb-6 bg-white p-2 rounded-xl shadow-sm border border-[#e1e9ee] inline-block">
+                                 <img src={part.imageFileUrl} className="rounded-lg max-h-52" />
+                               </div>
+                             )}
+                             {part.audioFileUrl && (
+                               <div className="mb-6 bg-white p-2 rounded-xl shadow-sm border border-[#e1e9ee] inline-block">
+                                 <audio src={part.audioFileUrl} controls className="h-10" />
+                               </div>
+                             )}
                              
-                             <div className="space-y-3 mt-4">
+                             <div className="space-y-4 mt-6">
                                {part.questions?.map((question: any, idx: number) => (
-                                 <div key={question.id} className="bg-white p-3 rounded-lg border border-outline-variant/30 flex gap-3 text-sm font-medium">
-                                   <span className="text-primary font-bold">{idx + 1}.</span>
-                                   <span className="whitespace-pre-wrap">{question.text}</span>
+                                 <div key={question.id} className="bg-white p-5 rounded-xl shadow-sm border border-[#e1e9ee] flex gap-4 text-[0.95rem] font-medium leading-relaxed">
+                                   <span className="text-[#565e74] font-bold">{idx + 1}.</span>
+                                   <span className="whitespace-pre-wrap text-[#2a3439]">{question.text}</span>
                                  </div>
                                ))}
                              </div>
@@ -215,23 +247,29 @@ export default function ExamPreviewPage() {
            </div>
          </div>
 
-         {/* Right Panel (Answers) */}
-         <div className="flex-1 bg-surface-container-lowest rounded-2xl border border-outline-variant/30 overflow-hidden flex flex-col shadow-[0_12px_32px_rgba(25,28,30,0.05)]">
-           <div className="bg-surface-container-lowest border-b border-outline-variant/20 p-4 flex gap-2 overflow-x-auto">
-             <button className="px-4 py-1.5 rounded-lg bg-primary/10 text-primary font-bold text-xs">Writing (Task 2)</button>
-             <button className="px-4 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container font-semibold text-xs transition-colors">Speaking</button>
+         {/* Right Panel: Student Answers workspace */}
+         <div className="flex-[3] bg-white rounded-[2rem] border border-[#a9b4b9]/15 overflow-hidden flex flex-col shadow-[0_8px_40px_rgba(42,52,57,0.08)]">
+           <div className="bg-[#f7f9fb] border-b border-[#e1e9ee] p-4 flex gap-3 overflow-x-auto min-h-[4rem] items-center">
+             <button className="px-5 py-2 rounded-xl bg-[#565e74] text-white font-semibold text-xs shadow-md transition-all">Writing Sandbox</button>
+             <button className="px-5 py-2 rounded-xl text-[#566166] hover:bg-[#e1e9ee] font-semibold text-xs transition-colors">Speaking Recording</button>
            </div>
-           <div className="p-6 flex-1 flex flex-col">
-             <p className="font-bold text-sm mb-4">You have 40 minutes for this task. Write your answer below.</p>
+           
+           <div className="p-8 flex-1 flex flex-col bg-white">
+             <div className="mb-6">
+               <h3 className="font-bold text-lg text-[#2a3439]">Scratchpad / Answers</h3>
+               <p className="text-sm text-[#566166] mt-1">Compose your responses securely here.</p>
+             </div>
+             
              <textarea 
-               placeholder="Write your answer here..."
+               placeholder="Begin typing your essay..."
                value={answers.writing.text}
                onChange={(e) => setAnswers({ ...answers, writing: { text: e.target.value } })}
-               className="w-full flex-1 bg-surface-container p-4 rounded-xl resize-none outline-none focus:ring-2 focus:ring-primary/20 border border-transparent focus:border-primary transition-all text-sm leading-relaxed"
+               className="w-full flex-1 bg-[#f7f9fb] p-6 rounded-2xl resize-none outline-none focus:ring-2 focus:ring-[#dae2fd] border border-[#e1e9ee] focus:border-[#565e74] transition-all text-[0.95rem] leading-loose text-[#2a3439] font-serif shadow-inner"
              ></textarea>
-             <div className="flex justify-between items-center mt-3 text-xs text-on-surface-variant">
-               <span>Word count: {answers.writing.text.trim().split(/\s+/).filter(Boolean).length}</span>
-               <span className="font-bold text-primary">Min: 250 words</span>
+             
+             <div className="flex justify-between items-center mt-6 p-4 bg-[#f0f4f7] rounded-xl border border-[#e1e9ee]">
+               <span className="text-xs text-[#566166] font-bold uppercase tracking-wider">Word count: <span className="text-[#2a3439] text-sm ml-1">{answers.writing.text.trim().split(/\s+/).filter(Boolean).length}</span></span>
+               <span className="text-xs text-[#894d00] font-bold uppercase tracking-wider">Required: 250</span>
              </div>
            </div>
          </div>
