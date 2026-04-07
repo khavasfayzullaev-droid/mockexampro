@@ -92,7 +92,9 @@ export default function MyExamsPage() {
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary">Mock Imtihon</span>
                     <span className="text-[10px] text-outline font-label uppercase tracking-wider">{new Date(exam.created_at).toLocaleDateString()}</span>
                   </div>
-                  <h4 className="font-headline font-bold text-xl text-on-surface group-hover:text-primary transition-colors">{exam.title || "Nomsiz Imtihon"}</h4>
+                  <Link href={`/teacher/exam-builder?edit=${exam.id}`} className="font-headline font-bold text-xl text-on-surface hover:text-primary transition-colors cursor-pointer text-left block">
+                    {exam.title || "Nomsiz Imtihon"}
+                  </Link>
                   <p className="text-xs text-on-surface-variant mt-1.5 font-medium flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-[14px]">tag</span> {exam.id.substring(0,8).toUpperCase()}
                   </p>
@@ -102,11 +104,15 @@ export default function MyExamsPage() {
               <div className="flex items-center gap-3 self-end sm:self-auto w-full sm:w-auto">
                 <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-surface-container-high text-on-surface hover:bg-surface-dim hover:text-primary px-4 py-2.5 rounded-xl text-sm font-bold transition-all border border-transparent hover:border-outline-variant/20 active:scale-95">
                   <span className="material-symbols-outlined text-[18px]">group_add</span>
-                  <span className="whitespace-nowrap">Guruhga biriktirish</span>
+                  <span className="hidden lg:inline whitespace-nowrap">Guruhga biriktirish</span>
                 </button>
+                <Link href={`/dashboard/exam/${exam.id}`} className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-secondary/10 text-secondary hover:bg-secondary hover:text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95">
+                  <span className="material-symbols-outlined text-[18px]">visibility</span>
+                  <span className="hidden lg:inline whitespace-nowrap">Ko'rib chiqish</span>
+                </Link>
                 <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-primary/10 text-primary hover:bg-primary hover:text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95">
                   <span className="material-symbols-outlined text-[18px]">bar_chart</span>
-                  <span className="whitespace-nowrap">Natijalar</span>
+                  <span className="hidden lg:inline whitespace-nowrap">Natijalar</span>
                 </button>
               </div>
             </div>

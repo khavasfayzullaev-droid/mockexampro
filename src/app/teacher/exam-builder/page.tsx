@@ -1,6 +1,5 @@
-"use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import ListeningPanel from "./ListeningPanel";
 import ReadingPanel from "./ReadingPanel";
@@ -34,35 +33,97 @@ function ComingSoonPanel({ title }: { title: string }) {
   );
 }
 
-/* ───────────── Main Page ───────────── */
-export default function ExamBuilderPage() {
+/* ───────────── Main Builder Content ───────────── */
+function ExamBuilderContent() {
   const [activeTab, setActiveTab] = useState<Tab>("Listening");
   const [examTitle, setExamTitle] = useState("Mock Exam #1");
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("edit");
+  const supabase = createClient();
+
+  useEffect(() => {
+    async function loadEditData() {
+      if (!editId) {
+        setIsReady(true);
+        return;
+      }
+      
+      try {
+        const { data: examData, error: examErr } = await supabase
+          .from("exams")
+          .select("*, questions(*)")
+          .eq("id", editId)
+          .single();
+          
+        if (examErr) throw examErr;
+        
+        if (examData) {
+          setExamTitle(examData.title || "Tahrirlanmoqda");
+          
+          // Clear old drafts first
+          localStorage.removeItem('listening_exam_v2');
+          localStorage.removeItem('reading_exam_v2');
+          localStorage.removeItem('writing_exam_v2');
+          localStorage.removeItem('speaking_exam_v2');
+
+          // Inject fetched questions into localStorage
+          examData.questions?.forEach((q: any) => {
+            if (q.section === 'listening') localStorage.setItem('listening_exam_v2', JSON.stringify(q.content));
+            if (q.section === 'reading') localStorage.setItem('reading_exam_v2', JSON.stringify(q.content));
+            if (q.section === 'writing') localStorage.setItem('writing_exam_v2', JSON.stringify(q.content));
+            if (q.section === 'speaking') localStorage.setItem('speaking_exam_v2', JSON.stringify(q.content));
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load edit exam:", err);
+      } finally {
+        setIsReady(true);
+      }
+    }
+    
+    loadEditData();
+  }, [editId, supabase]);
 
   const handlePublish = async () => {
     setIsPublishing(true);
     try {
-      const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Seans tugagan. Iltimos qayta login qiling.");
 
-      // 1. Create main Exam record
-      const { data: examData, error: examErr } = await supabase
-        .from("exams")
-        .insert({
-          title: examTitle,
-          teacher_id: user.id,
-          duration_minutes: 180,
-          is_active: true
-        })
-        .select()
-        .single();
-        
-      if (examErr) throw examErr;
+      let currentExamId = editId;
 
-      // 2. Extract Drafts from localStorage
+      if (currentExamId) {
+        // UPDATE existing exam
+        const { error: examErr } = await supabase
+          .from("exams")
+          .update({ title: examTitle })
+          .eq("id", currentExamId);
+        if (examErr) throw examErr;
+        
+        // Remove old questions to overwrite with new ones
+        await supabase.from("questions").delete().eq("exam_id", currentExamId);
+      } else {
+        // Create NEW exam record
+        const { data: examData, error: examErr } = await supabase
+          .from("exams")
+          .insert({
+            title: examTitle,
+            teacher_id: user.id,
+            duration_minutes: 180,
+            is_active: true
+          })
+          .select()
+          .single();
+          
+        if (examErr) throw examErr;
+        currentExamId = examData.id;
+      }
+
+      // Extract Drafts from localStorage
       const getDraft = (key: string) => {
         try {
           const d = localStorage.getItem(key);
@@ -79,7 +140,6 @@ export default function ExamBuilderPage() {
 
       const questionsToInsert = parts.map((p, index) => {
         const draft = getDraft(p.key);
-        // We only insert if the draft has actual content (parts/sections)
         const hasContent = draft && (
           (draft.sections && draft.sections.length > 0) || 
           (draft.parts && draft.parts.length > 0) ||
@@ -87,7 +147,7 @@ export default function ExamBuilderPage() {
         );
 
         return hasContent ? {
-          exam_id: examData.id,
+          exam_id: currentExamId,
           section: p.section,
           question_type: 'exam_section_v1',
           content: draft,
@@ -96,26 +156,34 @@ export default function ExamBuilderPage() {
       }).filter(Boolean);
 
       if (questionsToInsert.length === 0) {
-        // Rollback just in case
-        await supabase.from("exams").delete().eq("id", examData.id);
+        if (!editId) {
+          await supabase.from("exams").delete().eq("id", currentExamId);
+        }
         throw new Error("Hech qanday bo'lim to'ldirilmagan. Kamida 1 ta qism qo'shing.");
       }
 
-      // 3. Bulk insert sections
       const { error: insErr } = await supabase.from("questions").insert(questionsToInsert);
       if (insErr) throw insErr;
 
-      // 4. Clean Drafts
       parts.forEach(p => localStorage.removeItem(p.key));
       
-      alert("✅ Imtihon muvaffaqiyatli nashr etildi!");
-      router.push("/teacher"); // Go back to teacher dashboard / library
+      alert(editId ? "✅ Imtihon muvaffaqiyatli yangilandi!" : "✅ Imtihon muvaffaqiyatli nashr etildi!");
+      router.push("/teacher/my-exams");
     } catch (err: any) {
       alert("Xatolik yuz berdi: " + err.message);
     } finally {
       setIsPublishing(false);
     }
   };
+
+  if (!isReady) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
+        <h3 className="text-xl font-bold font-headline">Imtihon ma'lumotlari yuklanmoqda...</h3>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-in fade-in duration-500">
@@ -180,5 +248,17 @@ export default function ExamBuilderPage() {
         {activeTab === "Speaking" && <SpeakingPanel />}
       </div>
     </div>
+  );
+}
+
+export default function ExamBuilderPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <ExamBuilderContent />
+    </Suspense>
   );
 }
