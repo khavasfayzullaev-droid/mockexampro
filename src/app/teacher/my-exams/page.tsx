@@ -65,51 +65,39 @@ export default function MyExamsPage() {
       
       {/* Premium Delete Confirmation Modal */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6 animate-in fade-in duration-200">
           <div 
-            className="absolute inset-0 bg-[#191c1e]/60 backdrop-blur-[12px] transition-all"
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setIsDeleteModalOpen(false)}
           ></div>
-          <div className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-[0_32px_64px_rgba(0,0,0,0.2)] border border-[#c1c6d7]/20 overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-10 duration-500">
-            {/* Close Button */}
-            <button 
-              onClick={() => setIsDeleteModalOpen(false)}
-              className="absolute top-6 right-6 w-10 h-10 rounded-full flex items-center justify-center text-[#717786] hover:bg-slate-100 transition-colors z-10"
-            >
-              <span className="material-symbols-outlined">close</span>
-            </button>
-
-            <div className="p-10 pt-12 text-center">
-              <div className="w-24 h-24 bg-[#FF3B30]/10 text-[#FF3B30] rounded-full flex items-center justify-center mx-auto mb-8 transform hover:rotate-12 transition-transform duration-700">
-                <span className="material-symbols-outlined text-5xl" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
+          <div className="relative bg-white w-full sm:max-w-[400px] rounded-t-[2rem] sm:rounded-[2rem] shadow-[0_-8px_40px_rgba(0,0,0,0.15)] sm:shadow-[0_24px_48px_rgba(0,0,0,0.15)] overflow-hidden animate-in slide-in-from-bottom-8 duration-300">
+            <div className="px-8 pt-10 pb-8 text-center">
+              {/* Trash Icon */}
+              <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="material-symbols-outlined text-3xl text-red-500" style={{ fontVariationSettings: "'FILL' 1" }}>delete</span>
               </div>
               
-              <h4 className="font-headline text-2xl font-black text-[#191c1e] mb-4 tracking-tight">O'chirib tashlansinmi?</h4>
+              {/* Title */}
+              <h4 className="font-headline text-xl font-extrabold text-[#191c1e] mb-3">Imtihonni o'chirish</h4>
               
-              <div className="bg-slate-50 px-6 py-4 rounded-2xl mb-6 border border-slate-100">
-                <p className="text-[#414755] text-sm leading-relaxed">
-                  <span className="font-extrabold text-[#191c1e]">"{examToDelete?.title}"</span> imtihonini butunlay o'chirib tashlamoqchimisiz?
-                </p>
-              </div>
-
-              <div className="flex items-center justify-center gap-2 mb-8">
-                <div className="h-px bg-slate-100 flex-1"></div>
-                <p className="text-[#FF3B30] font-black text-[10px] uppercase tracking-[2px]">ORTGA QAYTARIB BO'LMAYDI</p>
-                <div className="h-px bg-slate-100 flex-1"></div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button 
-                  onClick={() => setIsDeleteModalOpen(false)}
-                  className="flex-1 px-8 py-4 rounded-2xl bg-slate-100 text-[#191c1e] font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95"
-                >
-                  Bekor qilish
-                </button>
+              {/* Description */}
+              <p className="text-[#6b7280] text-[15px] leading-relaxed mb-8 max-w-[300px] mx-auto">
+                Haqiqatan ham <span className="font-bold text-[#191c1e]">"{examToDelete?.title}"</span> imtihonini butunlay o'chirib yubormoqchimisiz? Imtihonga kiritilgan barcha savollar va natijalar xam o'chib ketishi mumkin.
+              </p>
+              
+              {/* Buttons - stacked vertically */}
+              <div className="flex flex-col gap-3">
                 <button 
                   onClick={confirmDelete}
-                  className="flex-[1.4] px-8 py-4 rounded-2xl bg-[#FF3B30] text-white font-black text-xs uppercase tracking-widest shadow-[0_12px_24px_rgba(255,59,48,0.3)] hover:shadow-[0_16px_32px_rgba(255,59,48,0.4)] hover:brightness-110 active:scale-95 transition-all"
+                  className="w-full py-4 rounded-2xl bg-red-500 text-white font-bold text-[15px] shadow-[0_8px_20px_rgba(239,68,68,0.3)] hover:bg-red-600 active:scale-[0.98] transition-all"
                 >
                   Ha, o'chirilsin
+                </button>
+                <button 
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  className="w-full py-4 rounded-2xl bg-gray-100 text-[#6b7280] font-bold text-[15px] hover:bg-gray-200 active:scale-[0.98] transition-all"
+                >
+                  Bekor qilish
                 </button>
               </div>
             </div>
