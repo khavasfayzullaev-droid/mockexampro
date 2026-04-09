@@ -33,26 +33,72 @@ export default function MyExamsPage() {
     ex.id.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleDelete = async (id: string, title: string) => {
-    if (!confirm(`"${title}" imtihonini butunlay o'chirib tashlamoqchimisiz? Bu amalni ortga qaytarib bo'lmaydi.`)) return;
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [examToDelete, setExamToDelete] = useState<{id: string, title: string} | null>(null);
+
+  const handleDeleteClick = (id: string, title: string) => {
+    setExamToDelete({ id, title });
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!examToDelete) return;
     
     try {
       const { error } = await supabase
         .from("exams")
         .delete()
-        .eq("id", id);
+        .eq("id", examToDelete.id);
 
       if (error) throw error;
       
-      setExams(prev => prev.filter(ex => ex.id !== id));
-      alert("Imtihon muvaffaqiyatli o'chirildi.");
+      setExams(prev => prev.filter(ex => ex.id !== examToDelete.id));
+      setIsDeleteModalOpen(false);
+      setExamToDelete(null);
     } catch (err: any) {
       alert("Xatolik: " + err.message);
     }
   };
 
   return (
-    <div className="animate-in fade-in duration-500">
+    <div className="animate-in fade-in duration-500 relative">
+      
+      {/* Premium Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-300">
+          <div 
+            className="absolute inset-0 bg-on-surface/40 backdrop-blur-md"
+            onClick={() => setIsDeleteModalOpen(false)}
+          ></div>
+          <div className="relative bg-surface-container-lowest w-full max-w-md rounded-[2rem] shadow-[0_24px_48px_rgba(42,52,57,0.15)] border border-outline-variant/30 overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="p-8 pb-4 text-center">
+              <div className="w-20 h-20 bg-error/10 text-error rounded-full flex items-center justify-center mx-auto mb-6 transform hover:scale-110 transition-transform duration-500">
+                <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
+              </div>
+              <h4 className="font-headline text-2xl font-extrabold text-on-surface mb-3 tracking-tight">O'chirib tashlansinmi?</h4>
+              <p className="text-on-surface-variant text-sm leading-relaxed mb-2">
+                <span className="font-bold text-on-surface">"{examToDelete?.title}"</span> imtihonini butunlay o'chirib tashlamoqchimisiz?
+              </p>
+              <p className="text-error font-bold text-[10px] uppercase tracking-widest bg-error/5 py-1 px-3 rounded-full inline-block">Ortga qaytarib bo'lmaydi</p>
+            </div>
+            <div className="p-8 pt-6 flex gap-3">
+              <button 
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="flex-1 px-6 py-4 rounded-2xl bg-surface-container-high text-on-surface font-bold text-sm hover:bg-surface-dim transition-all active:scale-95"
+              >
+                Bekor qilish
+              </button>
+              <button 
+                onClick={confirmDelete}
+                className="flex-[1.5] px-6 py-4 rounded-2xl bg-gradient-to-br from-error to-[#752121] text-white font-bold text-sm shadow-[0_8px_20px_rgba(159,64,61,0.25)] hover:shadow-[0_12px_24px_rgba(159,64,61,0.35)] hover:scale-[1.02] active:scale-95 transition-all"
+              >
+                Ha, o'chirilsin
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
         <div>
@@ -142,7 +188,7 @@ export default function MyExamsPage() {
                     <span className="material-symbols-outlined text-[18px]">edit</span>
                   </Link>
                   <button 
-                    onClick={() => handleDelete(exam.id, exam.title)}
+                    onClick={() => handleDeleteClick(exam.id, exam.title)}
                     className="p-2.5 rounded-xl bg-error/10 text-error hover:bg-error hover:text-white transition-all shadow-sm border border-transparent hover:border-error/20 active:scale-95 flex items-center justify-center"
                     title="O'chirish"
                   >
