@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 export default function MyExamsPage() {
   const [exams, setExams] = useState<any[]>([]);
@@ -62,48 +63,17 @@ export default function MyExamsPage() {
 
   return (
     <div className="animate-in fade-in duration-500 relative">
-      
-      {/* Premium Delete Confirmation Modal */}
-      {isDeleteModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6 animate-in fade-in duration-200">
-          <div 
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-            onClick={() => setIsDeleteModalOpen(false)}
-          ></div>
-          <div className="relative bg-white w-full sm:max-w-[400px] rounded-t-[2rem] sm:rounded-[2rem] shadow-[0_-8px_40px_rgba(0,0,0,0.15)] sm:shadow-[0_24px_48px_rgba(0,0,0,0.15)] overflow-hidden animate-in slide-in-from-bottom-8 duration-300">
-            <div className="px-8 pt-10 pb-8 text-center">
-              {/* Trash Icon */}
-              <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="material-symbols-outlined text-3xl text-red-500" style={{ fontVariationSettings: "'FILL' 1" }}>delete</span>
-              </div>
-              
-              {/* Title */}
-              <h4 className="font-headline text-xl font-extrabold text-[#191c1e] mb-3">Imtihonni o'chirish</h4>
-              
-              {/* Description */}
-              <p className="text-[#6b7280] text-[15px] leading-relaxed mb-8 max-w-[300px] mx-auto">
-                Haqiqatan ham <span className="font-bold text-[#191c1e]">"{examToDelete?.title}"</span> imtihonini butunlay o'chirib yubormoqchimisiz? Imtihonga kiritilgan barcha savollar va natijalar xam o'chib ketishi mumkin.
-              </p>
-              
-              {/* Buttons - stacked vertically */}
-              <div className="flex flex-col gap-3">
-                <button 
-                  onClick={confirmDelete}
-                  className="w-full py-4 rounded-2xl bg-red-500 text-white font-bold text-[15px] shadow-[0_8px_20px_rgba(239,68,68,0.3)] hover:bg-red-600 active:scale-[0.98] transition-all"
-                >
-                  Ha, o'chirilsin
-                </button>
-                <button 
-                  onClick={() => setIsDeleteModalOpen(false)}
-                  className="w-full py-4 rounded-2xl bg-gray-100 text-[#6b7280] font-bold text-[15px] hover:bg-gray-200 active:scale-[0.98] transition-all"
-                >
-                  Bekor qilish
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => { setIsDeleteModalOpen(false); setExamToDelete(null); }}
+        onConfirm={confirmDelete}
+        title="Imtihonni o'chirish"
+        message={`Haqiqatan ham bu guruhni butunlay o'chirib yubormoqchimisiz? Imtihonga kiritilgan barcha savollar va natijalar xam o'chib ketishi mumkin.`}
+        confirmText="Ha, o'chirilsin"
+        cancelText="Bekor qilish"
+        isDestructive={true}
+      />
 
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
