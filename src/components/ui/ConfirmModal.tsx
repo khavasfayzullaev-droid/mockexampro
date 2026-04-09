@@ -24,27 +24,36 @@ export default function ConfirmModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center"
+      style={{ margin: 0, padding: 0 }}
+    >
       {/* Backdrop overlay */}
       <div 
-        className="absolute inset-0 bg-on-surface/20 backdrop-blur-sm transition-opacity" 
+        className="fixed inset-0 bg-black/30 backdrop-blur-sm" 
         onClick={onClose}
       ></div>
 
-      {/* Modal Dialog */}
-      <div className="relative w-full max-w-sm bg-surface-container-lowest rounded-3xl shadow-[0_24px_48px_-12px_rgba(25,28,30,0.12)] border border-outline-variant/20 p-6 md:p-8 animate-in zoom-in-95 duration-300">
+      {/* Modal Dialog — true center */}
+      <div 
+        className="relative w-[90vw] max-w-sm bg-white rounded-3xl p-6 md:p-8"
+        style={{ 
+          boxShadow: '0 24px 48px -12px rgba(25,28,30,0.18)',
+          zIndex: 10000,
+        }}
+      >
         
         {/* Icon & Title block */}
         <div className="flex flex-col items-center text-center mb-6">
-          <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-5 ${isDestructive ? 'bg-red-100 text-red-600' : 'bg-primary-container text-primary'}`}>
-            <span className="material-symbols-outlined text-3xl">
+          <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-5 ${isDestructive ? 'bg-red-50 text-red-500' : 'bg-blue-50 text-blue-600'}`}>
+            <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
               {isDestructive ? 'delete' : 'info'}
             </span>
           </div>
-          <h3 className="font-headline font-extrabold text-xl text-on-surface tracking-tight mb-2">
+          <h3 className="font-headline font-extrabold text-xl text-[#191c1e] tracking-tight mb-2">
             {title}
           </h3>
-          <p className="text-on-surface-variant text-sm font-medium leading-relaxed font-body">
+          <p className="text-[#6b7280] text-sm font-medium leading-relaxed">
             {message}
           </p>
         </div>
@@ -56,10 +65,10 @@ export default function ConfirmModal({
               onConfirm();
               onClose();
             }}
-            className={`w-full py-3.5 rounded-xl font-bold transition-all active:scale-95 ${
+            className={`w-full py-3.5 rounded-2xl font-bold text-[15px] transition-all active:scale-[0.98] ${
               isDestructive 
-                ? 'bg-red-600 text-white shadow-md hover:bg-red-700' 
-                : 'bg-primary text-white shadow-md hover:bg-primary/90'
+                ? 'bg-red-500 text-white shadow-[0_8px_20px_rgba(239,68,68,0.3)] hover:bg-red-600' 
+                : 'bg-blue-600 text-white shadow-md hover:bg-blue-700'
             }`}
           >
             {confirmText}
@@ -67,7 +76,7 @@ export default function ConfirmModal({
           
           <button 
             onClick={onClose}
-            className="w-full py-3.5 rounded-xl font-semibold text-on-surface-variant bg-surface-container hover:bg-surface-container-high transition-colors active:scale-95 border border-transparent"
+            className="w-full py-3.5 rounded-2xl font-bold text-[15px] text-[#6b7280] bg-gray-100 hover:bg-gray-200 transition-colors active:scale-[0.98]"
           >
             {cancelText}
           </button>

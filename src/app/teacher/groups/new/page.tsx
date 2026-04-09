@@ -10,30 +10,28 @@ export default function NewGroupPage() {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!groupName.trim()) return;
+    if (!groupName.trim() || isSaving) return;
 
     setIsSaving(true);
     
     // Simulating database save using localStorage for frontend demonstration
-    setTimeout(() => {
-      const newGroup = {
-        id: Date.now().toString(),
-        title: groupName,
-        category: "GURUH",
-        status: "Yangi",
-        statusColor: "bg-tertiary-container text-on-tertiary-container",
-        indicatorColor: "bg-primary",
-        studentsCount: 0,
-        avgScore: "0%",
-        joinCode: "MTH-" + Math.floor(Math.random() * 10000),
-        inviteLink: "https://mockexam.pro/join/" + Math.floor(Math.random() * 10000)
-      };
+    const newGroup = {
+      id: Date.now().toString(),
+      title: groupName,
+      category: "GURUH",
+      status: "Yangi",
+      statusColor: "bg-tertiary-container text-on-tertiary-container",
+      indicatorColor: "bg-primary",
+      studentsCount: 0,
+      avgScore: "0%",
+      joinCode: "MTH-" + Math.floor(Math.random() * 10000),
+      inviteLink: "https://mockexam.pro/join/" + Math.floor(Math.random() * 10000)
+    };
 
-      const existingGroups = JSON.parse(localStorage.getItem('mock_groups') || '[]');
-      localStorage.setItem('mock_groups', JSON.stringify([...existingGroups, newGroup]));
+    const existingGroups = JSON.parse(localStorage.getItem('mock_groups') || '[]');
+    localStorage.setItem('mock_groups', JSON.stringify([...existingGroups, newGroup]));
 
-      router.push(`/teacher/groups/${newGroup.id}`);
-    }, 600);
+    router.push(`/teacher/groups/${newGroup.id}`);
   };
 
   return (
@@ -87,8 +85,8 @@ export default function NewGroupPage() {
           {/* Actions */}
           <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-outline-variant/10">
             <div className="flex items-center gap-4 w-full sm:w-auto">
-              <button type="submit" className="flex-1 sm:flex-none text-center px-10 py-4 bg-gradient-to-br from-primary to-primary-container text-white font-bold rounded-xl shadow-[0_8px_20px_-6px_rgba(0,88,188,0.4)] hover:shadow-[0_12px_24px_-6px_rgba(0,88,188,0.5)] transition-all active:scale-95 font-body">
-                Saqlash
+              <button type="submit" disabled={isSaving} className="flex-1 sm:flex-none text-center px-10 py-4 bg-gradient-to-br from-primary to-primary-container text-white font-bold rounded-xl shadow-[0_8px_20px_-6px_rgba(0,88,188,0.4)] hover:shadow-[0_12px_24px_-6px_rgba(0,88,188,0.5)] transition-all active:scale-95 font-body disabled:opacity-60 disabled:cursor-not-allowed">
+                {isSaving ? "Saqlanmoqda…" : "Saqlash"}
               </button>
               <Link href="/teacher/groups" className="flex-1 sm:flex-none text-center px-8 py-4 bg-surface-container-highest text-on-surface font-semibold rounded-xl hover:bg-surface-container-high transition-colors active:scale-95 font-body">
                 Bekor qilish
