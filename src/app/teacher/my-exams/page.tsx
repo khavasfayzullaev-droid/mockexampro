@@ -67,33 +67,51 @@ export default function MyExamsPage() {
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-300">
           <div 
-            className="absolute inset-0 bg-on-surface/40 backdrop-blur-md"
+            className="absolute inset-0 bg-[#191c1e]/60 backdrop-blur-[12px] transition-all"
             onClick={() => setIsDeleteModalOpen(false)}
           ></div>
-          <div className="relative bg-surface-container-lowest w-full max-w-md rounded-[2rem] shadow-[0_24px_48px_rgba(42,52,57,0.15)] border border-outline-variant/30 overflow-hidden animate-in zoom-in-95 duration-300">
-            <div className="p-8 pb-4 text-center">
-              <div className="w-20 h-20 bg-error/10 text-error rounded-full flex items-center justify-center mx-auto mb-6 transform hover:scale-110 transition-transform duration-500">
-                <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
+          <div className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-[0_32px_64px_rgba(0,0,0,0.2)] border border-[#c1c6d7]/20 overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-10 duration-500">
+            {/* Close Button */}
+            <button 
+              onClick={() => setIsDeleteModalOpen(false)}
+              className="absolute top-6 right-6 w-10 h-10 rounded-full flex items-center justify-center text-[#717786] hover:bg-slate-100 transition-colors z-10"
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+
+            <div className="p-10 pt-12 text-center">
+              <div className="w-24 h-24 bg-[#FF3B30]/10 text-[#FF3B30] rounded-full flex items-center justify-center mx-auto mb-8 transform hover:rotate-12 transition-transform duration-700">
+                <span className="material-symbols-outlined text-5xl" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
               </div>
-              <h4 className="font-headline text-2xl font-extrabold text-on-surface mb-3 tracking-tight">O'chirib tashlansinmi?</h4>
-              <p className="text-on-surface-variant text-sm leading-relaxed mb-2">
-                <span className="font-bold text-on-surface">"{examToDelete?.title}"</span> imtihonini butunlay o'chirib tashlamoqchimisiz?
-              </p>
-              <p className="text-error font-bold text-[10px] uppercase tracking-widest bg-error/5 py-1 px-3 rounded-full inline-block">Ortga qaytarib bo'lmaydi</p>
-            </div>
-            <div className="p-8 pt-6 flex gap-3">
-              <button 
-                onClick={() => setIsDeleteModalOpen(false)}
-                className="flex-1 px-6 py-4 rounded-2xl bg-surface-container-high text-on-surface font-bold text-sm hover:bg-surface-dim transition-all active:scale-95"
-              >
-                Bekor qilish
-              </button>
-              <button 
-                onClick={confirmDelete}
-                className="flex-[1.5] px-6 py-4 rounded-2xl bg-gradient-to-br from-error to-[#752121] text-white font-bold text-sm shadow-[0_8px_20px_rgba(159,64,61,0.25)] hover:shadow-[0_12px_24px_rgba(159,64,61,0.35)] hover:scale-[1.02] active:scale-95 transition-all"
-              >
-                Ha, o'chirilsin
-              </button>
+              
+              <h4 className="font-headline text-2xl font-black text-[#191c1e] mb-4 tracking-tight">O'chirib tashlansinmi?</h4>
+              
+              <div className="bg-slate-50 px-6 py-4 rounded-2xl mb-6 border border-slate-100">
+                <p className="text-[#414755] text-sm leading-relaxed">
+                  <span className="font-extrabold text-[#191c1e]">"{examToDelete?.title}"</span> imtihonini butunlay o'chirib tashlamoqchimisiz?
+                </p>
+              </div>
+
+              <div className="flex items-center justify-center gap-2 mb-8">
+                <div className="h-px bg-slate-100 flex-1"></div>
+                <p className="text-[#FF3B30] font-black text-[10px] uppercase tracking-[2px]">ORTGA QAYTARIB BO'LMAYDI</p>
+                <div className="h-px bg-slate-100 flex-1"></div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button 
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  className="flex-1 px-8 py-4 rounded-2xl bg-slate-100 text-[#191c1e] font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95"
+                >
+                  Bekor qilish
+                </button>
+                <button 
+                  onClick={confirmDelete}
+                  className="flex-[1.4] px-8 py-4 rounded-2xl bg-[#FF3B30] text-white font-black text-xs uppercase tracking-widest shadow-[0_12px_24px_rgba(255,59,48,0.3)] hover:shadow-[0_16px_32px_rgba(255,59,48,0.4)] hover:brightness-110 active:scale-95 transition-all"
+                >
+                  Ha, o'chirilsin
+                </button>
+              </div>
             </div>
           </div>
         </div>
