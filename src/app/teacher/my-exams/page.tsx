@@ -33,6 +33,24 @@ export default function MyExamsPage() {
     ex.id.toLowerCase().includes(search.toLowerCase())
   );
 
+  const handleDelete = async (id: string, title: string) => {
+    if (!confirm(`"${title}" imtihonini butunlay o'chirib tashlamoqchimisiz? Bu amalni ortga qaytarib bo'lmaydi.`)) return;
+    
+    try {
+      const { error } = await supabase
+        .from("exams")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+      
+      setExams(prev => prev.filter(ex => ex.id !== id));
+      alert("Imtihon muvaffaqiyatli o'chirildi.");
+    } catch (err: any) {
+      alert("Xatolik: " + err.message);
+    }
+  };
+
   return (
     <div className="animate-in fade-in duration-500">
       {/* Header Section */}
@@ -101,7 +119,7 @@ export default function MyExamsPage() {
                 </div>
               </div>
               
-              <div className="flex items-center gap-3 self-end sm:self-auto w-full sm:w-auto">
+              <div className="flex items-center gap-2 self-end sm:self-auto w-full sm:w-auto">
                 <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-surface-container-high text-on-surface hover:bg-surface-dim hover:text-primary px-4 py-2.5 rounded-xl text-sm font-bold transition-all border border-transparent hover:border-outline-variant/20 active:scale-95">
                   <span className="material-symbols-outlined text-[18px]">group_add</span>
                   <span className="hidden lg:inline whitespace-nowrap">Guruhga biriktirish</span>
@@ -114,6 +132,23 @@ export default function MyExamsPage() {
                   <span className="material-symbols-outlined text-[18px]">bar_chart</span>
                   <span className="hidden lg:inline whitespace-nowrap">Natijalar</span>
                 </button>
+
+                <div className="flex items-center gap-2 border-l border-outline-variant/30 pl-2">
+                  <Link 
+                    href={`/teacher/exam-builder?edit=${exam.id}`}
+                    className="p-2.5 rounded-xl bg-surface-container-high text-on-surface hover:text-primary hover:bg-surface-dim transition-all shadow-sm border border-transparent hover:border-outline-variant/20 active:scale-95 flex items-center justify-center"
+                    title="Tahrirlash"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">edit</span>
+                  </Link>
+                  <button 
+                    onClick={() => handleDelete(exam.id, exam.title)}
+                    className="p-2.5 rounded-xl bg-error/10 text-error hover:bg-error hover:text-white transition-all shadow-sm border border-transparent hover:border-error/20 active:scale-95 flex items-center justify-center"
+                    title="O'chirish"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                </div>
               </div>
             </div>
           ))}
