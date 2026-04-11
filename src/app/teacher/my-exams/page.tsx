@@ -146,10 +146,7 @@ export default function MyExamsPage() {
                   <span className="material-symbols-outlined text-[18px]">group_add</span>
                   <span className="hidden lg:inline whitespace-nowrap">Guruhga biriktirish</span>
                 </button>
-                <Link href={`/dashboard/exam/${exam.id}`} className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-secondary/10 text-secondary hover:bg-secondary hover:text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95">
-                  <span className="material-symbols-outlined text-[18px]">visibility</span>
-                  <span className="hidden lg:inline whitespace-nowrap">Ko'rib chiqish</span>
-                </Link>
+
                 <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-primary/10 text-primary hover:bg-primary hover:text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95">
                   <span className="material-symbols-outlined text-[18px]">bar_chart</span>
                   <span className="hidden lg:inline whitespace-nowrap">Natijalar</span>
