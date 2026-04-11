@@ -8,6 +8,10 @@ export default function NewGroupPage() {
   const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
 
+  const [createdGroup, setCreatedGroup] = useState<any>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     if (!groupName.trim() || isSaving) return;
@@ -31,7 +35,28 @@ export default function NewGroupPage() {
     const existingGroups = JSON.parse(localStorage.getItem('mock_groups') || '[]');
     localStorage.setItem('mock_groups', JSON.stringify([...existingGroups, newGroup]));
 
-    router.push(`/teacher/groups/${newGroup.id}`);
+    setCreatedGroup(newGroup);
+    setIsSaving(false);
+  };
+
+  const copyLink = () => {
+    if (createdGroup) {
+      navigator.clipboard.writeText(createdGroup.inviteLink);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
+  };
+
+  const copyCode = () => {
+    if (createdGroup) {
+      navigator.clipboard.writeText(createdGroup.joinCode);
+      setCopiedCode(true);
+      setTimeout(() => setCopiedCode(false), 2000);
+    }
+  };
+
+  const handleCloseModal = () => {
+    router.push('/teacher/groups');
   };
 
   return (
@@ -95,6 +120,83 @@ export default function NewGroupPage() {
           </div>
         </form>
       </section>
+
+      {/* Success Modal with Invite Options */}
+      {createdGroup && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCloseModal}></div>
+          <div className="relative bg-white w-full max-w-[480px] rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+            {/* Header portion */}
+            <div className="bg-gradient-to-br from-primary via-primary to-[#003b82] text-white p-8 pb-10 text-center relative">
+              <button onClick={handleCloseModal} className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors bg-white/10 hover:bg-white/20 p-2 rounded-full">
+                <span className="material-symbols-outlined text-lg">close</span>
+              </button>
+              
+              <div className="w-20 h-20 bg-success/20 border-4 border-success/30 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
+                <span className="material-symbols-outlined text-4xl text-success" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+              </div>
+              <h2 className="font-headline font-bold text-2xl tracking-tight mb-2">Guruh muvaffaqiyatli yaratildi!</h2>
+              <p className="text-white/80 text-sm">O'quvchilarni guruhga qo'shish uchun quyidagi ma'lumotlarni ulashing</p>
+            </div>
+
+            {/* Content portion */}
+            <div className="p-8 pb-10 bg-white">
+              <div className="space-y-6">
+                
+                {/* Invite Link */}
+                <div className="relative">
+                  <label className="text-xs font-bold uppercase tracking-wider text-outline mb-2 block">Tezkor havola (Link)</label>
+                  <div className="flex gap-2">
+                    <div className="bg-surface-container-low px-4 py-3 rounded-xl text-sm border border-outline-variant/30 flex-1 truncate font-mono text-on-surface">
+                      {createdGroup.inviteLink}
+                    </div>
+                    <button 
+                      onClick={copyLink}
+                      className={`px-5 py-3 rounded-xl font-bold text-sm transition-all shadow-sm ${copiedLink ? 'bg-success text-white' : 'bg-primary text-white hover:bg-primary-dark active:scale-95'}`}
+                    >
+                      {copiedLink ? 'Nusxalandi!' : 'Nusxalash'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* divider */}
+                <div className="flex items-center gap-4">
+                  <div className="h-px bg-outline-variant/20 flex-1"></div>
+                  <span className="text-xs font-bold text-outline uppercase">Yoki kiritish u-n</span>
+                  <div className="h-px bg-outline-variant/20 flex-1"></div>
+                </div>
+
+                {/* Code format */}
+                <div className="relative group">
+                  <label className="text-xs font-bold uppercase tracking-wider text-outline mb-2 block text-center">Guruh ID kodi</label>
+                  <div className="flex justify-center items-center gap-4">
+                    <span className="font-headline font-black text-3xl tracking-widest text-[#191c1e] bg-surface-container-lowest px-6 py-3 rounded-2xl border-2 border-primary/20 shadow-sm">
+                      {createdGroup.joinCode}
+                    </span>
+                    <button 
+                      onClick={copyCode}
+                      className="w-12 h-12 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors flex items-center justify-center border border-outline-variant/30 active:scale-95 text-on-surface"
+                      title="Kodni nusxalash"
+                    >
+                      <span className="material-symbols-outlined text-[20px]">
+                        {copiedCode ? 'check' : 'content_copy'}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                
+              </div>
+              
+              <button 
+                onClick={handleCloseModal}
+                className="w-full mt-8 bg-surface-container-highest text-on-surface py-3.5 rounded-xl font-bold hover:bg-surface-container-high transition-colors active:scale-95"
+              >
+                Guruhlarni ko'rish
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

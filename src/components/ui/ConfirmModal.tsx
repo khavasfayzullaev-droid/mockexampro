@@ -1,4 +1,6 @@
-import React from 'react';
+"use client";
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -21,67 +23,138 @@ export default function ConfirmModal({
   cancelText = "Bekor qilish",
   isDestructive = true
 }: ConfirmModalProps) {
-  if (!isOpen) return null;
+  const [mounted, setMounted] = useState(false);
 
-  return (
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !mounted) return null;
+
+  const modal = (
     <div 
-      className="fixed inset-0 z-[9999] flex items-center justify-center"
-      style={{ margin: 0, padding: 0 }}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 99999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
     >
-      {/* Backdrop overlay */}
+      {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/30 backdrop-blur-sm" 
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.35)',
+          backdropFilter: 'blur(4px)',
+          WebkitBackdropFilter: 'blur(4px)',
+        }}
         onClick={onClose}
-      ></div>
+      />
 
-      {/* Modal Dialog — true center */}
+      {/* Modal Card */}
       <div 
-        className="relative w-[90vw] max-w-sm bg-white rounded-3xl p-6 md:p-8"
-        style={{ 
-          boxShadow: '0 24px 48px -12px rgba(25,28,30,0.18)',
-          zIndex: 10000,
+        style={{
+          position: 'relative',
+          width: '90vw',
+          maxWidth: '380px',
+          backgroundColor: '#ffffff',
+          borderRadius: '1.5rem',
+          padding: '2rem',
+          boxShadow: '0 24px 48px -12px rgba(0,0,0,0.2)',
+          zIndex: 100000,
+          animation: 'modalIn 0.2s ease-out',
         }}
       >
-        
-        {/* Icon & Title block */}
-        <div className="flex flex-col items-center text-center mb-6">
-          <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-5 ${isDestructive ? 'bg-red-50 text-red-500' : 'bg-blue-50 text-blue-600'}`}>
-            <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+        {/* Icon */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '1.5rem' }}>
+          <div 
+            style={{
+              width: '4rem',
+              height: '4rem',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '1.25rem',
+              backgroundColor: isDestructive ? '#fef2f2' : '#eff6ff',
+              color: isDestructive ? '#ef4444' : '#2563eb',
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '1.75rem', fontVariationSettings: "'FILL' 1" }}>
               {isDestructive ? 'delete' : 'info'}
             </span>
           </div>
-          <h3 className="font-headline font-extrabold text-xl text-[#191c1e] tracking-tight mb-2">
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#191c1e', marginBottom: '0.5rem', letterSpacing: '-0.01em' }}>
             {title}
           </h3>
-          <p className="text-[#6b7280] text-sm font-medium leading-relaxed">
+          <p style={{ fontSize: '0.875rem', color: '#6b7280', lineHeight: 1.6, fontWeight: 500 }}>
             {message}
           </p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col gap-3">
+        {/* Buttons */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <button 
             onClick={() => {
               onConfirm();
               onClose();
             }}
-            className={`w-full py-3.5 rounded-2xl font-bold text-[15px] transition-all active:scale-[0.98] ${
-              isDestructive 
-                ? 'bg-red-500 text-white shadow-[0_8px_20px_rgba(239,68,68,0.3)] hover:bg-red-600' 
-                : 'bg-blue-600 text-white shadow-md hover:bg-blue-700'
-            }`}
+            style={{
+              width: '100%',
+              padding: '0.875rem',
+              borderRadius: '1rem',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '0.9375rem',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
+              backgroundColor: isDestructive ? '#ef4444' : '#2563eb',
+              color: '#ffffff',
+              boxShadow: isDestructive 
+                ? '0 8px 20px rgba(239,68,68,0.3)' 
+                : '0 8px 20px rgba(37,99,235,0.3)',
+            }}
           >
             {confirmText}
           </button>
           
           <button 
             onClick={onClose}
-            className="w-full py-3.5 rounded-2xl font-bold text-[15px] text-[#6b7280] bg-gray-100 hover:bg-gray-200 transition-colors active:scale-[0.98]"
+            style={{
+              width: '100%',
+              padding: '0.875rem',
+              borderRadius: '1rem',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '0.9375rem',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
+              backgroundColor: '#f3f4f6',
+              color: '#6b7280',
+            }}
           >
             {cancelText}
           </button>
         </div>
       </div>
+
+      <style>{`
+        @keyframes modalIn {
+          from { opacity: 0; transform: scale(0.95) translateY(10px); }
+          to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+      `}</style>
     </div>
   );
+
+  return createPortal(modal, document.body);
 }

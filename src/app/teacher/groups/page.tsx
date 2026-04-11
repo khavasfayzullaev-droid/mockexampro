@@ -66,12 +66,17 @@ export default function GroupsPage() {
                   <h3 className="text-xl font-extrabold font-headline text-on-surface leading-tight line-clamp-2">{group.title}</h3>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <div className={`${group.statusColor ?? 'bg-tertiary-container text-on-tertiary-container'} px-3 py-1 rounded-full text-xs font-semibold`}>
+                  <div className={`${group.statusColor ?? 'bg-tertiary-container text-on-tertiary-container'} px-3 py-1 rounded-full text-[11px] uppercase tracking-wider font-bold`}>
                     {group.status}
                   </div>
-                  <button onClick={(e) => { e.preventDefault(); setGroupToDelete(group.id); }} className="w-8 h-8 rounded-full hover:bg-error-container/50 text-error flex items-center justify-center transition-colors" title="Guruhni o'chirish">
-                    <span className="material-symbols-outlined text-[18px]">delete</span>
-                  </button>
+                  <div className="flex items-center gap-1 border-l border-outline-variant/30 pl-2 ml-1">
+                    <Link href={`/teacher/groups/${group.id}`} className="w-8 h-8 rounded-full hover:bg-primary/10 text-primary flex items-center justify-center transition-colors" title="A'zolarni boshqarish">
+                      <span className="material-symbols-outlined text-[18px]">group_add</span>
+                    </Link>
+                    <button onClick={(e) => { e.preventDefault(); setGroupToDelete(group.id); }} className="w-8 h-8 rounded-full hover:bg-error-container/50 text-error flex items-center justify-center transition-colors" title="Guruhni o'chirish">
+                      <span className="material-symbols-outlined text-[18px]">delete</span>
+                    </button>
+                  </div>
                 </div>
               </div>
               <div className="space-y-4 mb-8">
