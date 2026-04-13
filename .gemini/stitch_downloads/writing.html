@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html lang="uz"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#f8f9fa",
+                    "on-primary-fixed": "#001a41",
+                    "inverse-primary": "#adc6ff",
+                    "error": "#ba1a1a",
+                    "on-background": "#191c1d",
+                    "primary-container": "#0070eb",
+                    "primary": "#0058bc",
+                    "on-tertiary-fixed": "#351000",
+                    "surface-container-highest": "#e1e3e4",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-container": "#edeeef",
+                    "on-tertiary-fixed-variant": "#7c2e00",
+                    "inverse-surface": "#2e3132",
+                    "surface-container-low": "#f3f4f5",
+                    "error-container": "#ffdad6",
+                    "surface-variant": "#e1e3e4",
+                    "outline": "#717786",
+                    "on-secondary-fixed": "#002107",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#414755",
+                    "surface-container-high": "#e7e8e9",
+                    "surface-dim": "#d9dadb",
+                    "on-tertiary-container": "#fffbff",
+                    "tertiary-fixed": "#ffdbcc",
+                    "tertiary-container": "#c64f00",
+                    "tertiary": "#9e3d00",
+                    "background": "#f8f9fa",
+                    "on-secondary-container": "#00732a",
+                    "outline-variant": "#c1c6d7",
+                    "secondary": "#006e28",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-fixed-variant": "#00531c",
+                    "secondary-container": "#6ffb85",
+                    "on-surface": "#191c1d",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#f8f9fa",
+                    "secondary-fixed-dim": "#53e16f",
+                    "inverse-on-surface": "#f0f1f2",
+                    "secondary-fixed": "#72fe88",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed-dim": "#ffb595",
+                    "on-primary-fixed-variant": "#004493",
+                    "surface-tint": "#005bc1",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#fefcff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .soul-gradient {
+            background: linear-gradient(135deg, #0058bc 0%, #0070eb 100%);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- Top Navigation Bar (Shared Component - Fixed Context) -->
+<header class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl flex justify-between items-center px-8 h-16 shadow-[0_12px_32px_rgba(0,0,0,0.04)]">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold tracking-tight text-slate-900">Examiner Pro</span>
+<div class="ml-8 hidden md:flex items-center gap-6">
+<a class="text-slate-500 hover:text-slate-700 body-md" href="#">Dashboard</a>
+<a class="text-blue-600 font-semibold border-b-2 border-blue-600 body-md" href="#">Exams</a>
+<a class="text-slate-500 hover:text-slate-700 body-md" href="#">Reports</a>
+<a class="text-slate-500 hover:text-slate-700 body-md" href="#">Settings</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-500">notifications</span>
+<span class="material-symbols-outlined text-slate-500">help</span>
+</div>
+<button class="soul-gradient text-white px-6 py-2 rounded-full font-medium hover:scale-105 transition-transform duration-200">
+                Create Session
+            </button>
+<img alt="Teacher Profile" class="w-8 h-8 rounded-full bg-slate-200" data-alt="close-up portrait of a professional male teacher in a blue shirt with soft office lighting background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVQ7GHuWKnDfqthEjhT0CWeT5QHj7cUYrx_XJHAfSKEMdLi2QNkaGwyapFy0tzgkfDtWoKYxzdFXCCiT-2_99Mrvp20OSUr20kAKK9LCzAFnV4NRgGSg4f8OCbIeL5CKMv9vAQnY5ffCDzWH5uIMVe_c3Wfjezm-3nRsD3VR1k1C5c8pL6hj2W-ScaWytR3OhpQ8tUiR5R7xCa1wuP9eUu_B39dbsAjGOcjougVh0xlgvYJ0v82ACK3WdD9SlF_jNBd5YChBHvng"/>
+</div>
+</header>
+<!-- Side Navigation Bar (Shared Component - Hidden on desktop for this view) -->
+<aside class="fixed left-0 h-full w-64 pt-20 bg-slate-50 border-r border-slate-100 flex flex-col hidden lg:flex">
+<div class="px-6 mb-8">
+<h1 class="text-lg font-black text-blue-700">Lucid Atelier</h1>
+<p class="text-xs text-on-surface-variant">Exam Grading Suite</p>
+</div>
+<nav class="flex flex-col gap-1">
+<div class="px-6 py-3 flex items-center gap-3 text-slate-500 hover:bg-slate-200/50 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="label-md">Candidates</span>
+</div>
+<div class="px-6 py-3 flex items-center gap-3 bg-white text-blue-600 rounded-l-full shadow-sm transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="label-md">Scripts</span>
+</div>
+<div class="px-6 py-3 flex items-center gap-3 text-slate-500 hover:bg-slate-200/50 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="label-md">Analytics</span>
+</div>
+<div class="px-6 py-3 flex items-center gap-3 text-slate-500 hover:bg-slate-200/50 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="folder_open">folder_open</span>
+<span class="label-md">Resources</span>
+</div>
+<div class="px-6 py-3 flex items-center gap-3 text-slate-500 hover:bg-slate-200/50 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="label-md">Archive</span>
+</div>
+</nav>
+<div class="mt-auto px-6 py-6 border-t border-slate-200">
+<button class="w-full soul-gradient text-white py-3 rounded-xl font-semibold shadow-lg">New Grading Task</button>
+<div class="mt-4 flex items-center gap-3 text-slate-500 px-2 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span class="text-sm">Support</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Area: 3-Column Layout -->
+<main class="pt-20 pl-0 lg:pl-64 min-h-screen bg-surface">
+<div class="grid grid-cols-12 gap-6 p-6 h-full">
+<!-- Column 1: Student List -->
+<section class="col-span-12 md:col-span-4 lg:col-span-3 flex flex-col gap-4">
+<div class="bg-surface-container-low p-4 rounded-xl">
+<div class="flex items-center bg-surface-container-lowest rounded-full px-4 py-2 shadow-sm mb-4">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-outline-variant" placeholder="O'quvchini qidirish..." type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-container-highest text-on-surface px-3 py-1 rounded-full text-xs font-medium">Barchasi</button>
+<button class="bg-primary text-white px-3 py-1 rounded-full text-xs font-medium">Kutilmoqda</button>
+<button class="bg-surface-container-highest text-on-surface px-3 py-1 rounded-full text-xs font-medium">Baholangan</button>
+</div>
+</div>
+<div class="flex flex-col gap-3 overflow-y-auto max-h-[calc(100vh-280px)] pr-2">
+<!-- Student Card Active -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border-l-4 border-primary shadow-sm cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-bold text-on-surface">Abduvohid Qodirov</h4>
+<span class="text-[10px] uppercase tracking-wider text-primary font-bold">Writing Task 2</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3 italic truncate">"Modern technology has a profound..."</p>
+<div class="flex justify-between items-center">
+<span class="bg-primary-container/10 text-primary px-2 py-1 rounded-md text-[10px] font-bold">Kutilmoqda</span>
+<span class="text-[10px] text-outline">12:45 PM</span>
+</div>
+</div>
+<!-- Other Students -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border-l-4 border-transparent hover:border-outline-variant transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-medium text-on-surface">Malika Saidova</h4>
+<span class="text-[10px] uppercase tracking-wider text-outline font-medium">Writing Task 1</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3 italic truncate">"The bar chart illustrates the changes..."</p>
+<div class="flex justify-between items-center">
+<span class="bg-secondary/10 text-secondary px-2 py-1 rounded-md text-[10px] font-bold">Baholangan</span>
+<span class="text-[10px] text-outline">Kecha</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl border-l-4 border-transparent hover:border-outline-variant transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-medium text-on-surface">Jasur Xolmatov</h4>
+<span class="text-[10px] uppercase tracking-wider text-outline font-medium">Writing Task 2</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3 italic truncate">"Education is the backbone of society..."</p>
+<div class="flex justify-between items-center">
+<span class="bg-primary-container/10 text-primary px-2 py-1 rounded-md text-[10px] font-bold">Kutilmoqda</span>
+<span class="text-[10px] text-outline">Kecha</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Column 2: Writing Content -->
+<section class="col-span-12 md:col-span-8 lg:col-span-6">
+<!-- Header Tabs -->
+<nav class="flex gap-8 mb-6 border-b border-outline-variant/20 pb-0">
+<button class="pb-3 text-on-surface-variant hover:text-primary transition-colors text-sm font-medium">Listening</button>
+<button class="pb-3 text-on-surface-variant hover:text-primary transition-colors text-sm font-medium">Reading</button>
+<button class="pb-3 text-primary border-b-2 border-primary text-sm font-bold">Writing</button>
+<button class="pb-3 text-on-surface-variant hover:text-primary transition-colors text-sm font-medium">Speaking</button>
+</nav>
+<div class="flex flex-col gap-6">
+<!-- Prompt Card -->
+<div class="bg-surface-container-low p-6 rounded-2xl relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 soul-gradient opacity-10 rounded-full -mr-16 -mt-16"></div>
+<h3 class="text-sm font-bold text-primary mb-2 uppercase tracking-widest">Savol (Writing Task 2)</h3>
+<p class="text-on-surface leading-relaxed font-medium italic">
+                            "Many people believe that social media has a negative impact on human relationships. Others disagree and think it helps people stay connected. Discuss both views and give your own opinion."
+                        </p>
+</div>
+<!-- Student Essay -->
+<div class="bg-surface-container-lowest p-8 rounded-2xl shadow-sm min-h-[600px] relative">
+<div class="flex justify-between items-center mb-6">
+<span class="text-xs font-bold text-outline uppercase tracking-tighter">O'quvchi javobi</span>
+<div class="bg-surface-container px-3 py-1 rounded-full text-[11px] font-bold text-on-surface-variant">
+                                284 So'z
+                            </div>
+</div>
+<article class="text-[16px] text-on-surface leading-[1.8] font-body">
+<p class="mb-4">In the contemporary world, the influence of social media on interpersonal connections is a topic of significant debate. While some individuals argue that these platforms deteriorate the quality of human relationships, others contend that they serve as a vital tool for maintaining global connectivity. This essay will discuss both perspectives and argue that the benefits of social media, when used mindfully, outweigh its drawbacks.</p>
+<p class="mb-4">On one hand, critics of social media highlight the erosion of face-to-face interactions. They argue that people are becoming increasingly isolated as they prioritize virtual engagements over physical presence. For instance, it is common to see friends sitting together at a restaurant, yet all are preoccupied with their smartphones. This leads to a superficial level of connection where the depth of human emotion and non-verbal cues are often lost in translation through screens.</p>
+<p class="mb-4">On the other hand, proponents of digital platforms emphasize their role in bridging geographical distances. Social media allows families and friends separated by thousands of miles to share moments in real-time. Without these tools, maintaining long-distance relationships would be significantly more challenging and expensive. Furthermore, social media facilitates the formation of communities based on shared interests, providing a sense of belonging to those who might feel marginalized in their local environment.</p>
+<p>In conclusion, although social media can lead to a decrease in physical interaction, its ability to unite people across the globe is invaluable. In my opinion, as long as individuals strike a balance between their digital and physical lives, social media remains a positive force in human relationships.</p>
+</article>
+</div>
+</div>
+</section>
+<!-- Column 3: Grading Panel (Sticky) -->
+<section class="col-span-12 lg:col-span-3">
+<div class="sticky top-24 flex flex-col gap-4">
+<!-- Band Score Card -->
+<div class="soul-gradient p-6 rounded-2xl text-white shadow-xl flex flex-col items-center">
+<span class="text-xs font-bold uppercase tracking-widest opacity-80 mb-2">Umumiy Band</span>
+<div class="text-6xl font-black mb-1 tracking-tighter">7.5</div>
+<div class="bg-white/20 px-3 py-1 rounded-full text-[10px] font-bold">B1 PRO DARAJASI</div>
+</div>
+<!-- Criteria Sliders -->
+<div class="bg-surface-container-lowest p-5 rounded-2xl shadow-sm border border-outline-variant/10">
+<h4 class="text-sm font-bold text-on-surface mb-6">IELTS Mezonlari</h4>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between items-center mb-2">
+<label class="text-[11px] font-bold text-on-surface-variant uppercase">Task Achievement</label>
+<span class="text-xs font-bold text-primary">7.0</span>
+</div>
+<input class="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" max="9" min="0" step="0.5" type="range" value="7"/>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<label class="text-[11px] font-bold text-on-surface-variant uppercase">Coherence &amp; Cohesion</label>
+<span class="text-xs font-bold text-primary">8.0</span>
+</div>
+<input class="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" max="9" min="0" step="0.5" type="range" value="8"/>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<label class="text-[11px] font-bold text-on-surface-variant uppercase">Lexical Resource</label>
+<span class="text-xs font-bold text-primary">7.5</span>
+</div>
+<input class="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" max="9" min="0" step="0.5" type="range" value="7.5"/>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<label class="text-[11px] font-bold text-on-surface-variant uppercase">Grammar &amp; Accuracy</label>
+<span class="text-xs font-bold text-primary">7.5</span>
+</div>
+<input class="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" max="9" min="0" step="0.5" type="range" value="7.5"/>
+</div>
+</div>
+</div>
+<!-- Feedback Area -->
+<div class="bg-surface-container-lowest p-5 rounded-2xl shadow-sm border border-outline-variant/10">
+<div class="flex justify-between items-center mb-4">
+<h4 class="text-sm font-bold text-on-surface">O'qituvchi Feedbacki</h4>
+<button class="text-primary hover:bg-primary/10 p-2 rounded-full transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">mic</span>
+</button>
+</div>
+<textarea class="w-full h-32 bg-surface-container rounded-xl border-none p-3 text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-outline-variant" placeholder="Feedback qoldiring..."></textarea>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-3 pt-2">
+<button class="w-full soul-gradient text-white py-4 rounded-full font-bold shadow-lg hover:scale-[1.02] transition-transform">
+                            Tasdiqlash va Yuborish
+                        </button>
+<button class="w-full bg-surface-container-high text-on-surface-variant py-4 rounded-full font-bold hover:bg-surface-container-highest transition-colors">
+                            Qoralama (Draft)
+                        </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Floating UI Element for Visual Depth -->
+<div class="fixed bottom-8 right-8 z-[60] lg:hidden">
+<button class="soul-gradient w-14 h-14 rounded-full text-white shadow-2xl flex items-center justify-center">
+<span class="material-symbols-outlined">edit_note</span>
+</button>
+</div>
+</body></html>

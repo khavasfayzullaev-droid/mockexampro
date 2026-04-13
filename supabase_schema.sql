@@ -42,7 +42,11 @@ CREATE TABLE public.results (
   teacher_feedback TEXT,
   status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'graded')),
   submitted_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  graded_at TIMESTAMP WITH TIME ZONE
+  graded_at TIMESTAMP WITH TIME ZONE,
+  criteria_writing JSONB,        -- {"ta": 7.0, "cc": 8.0, "lr": 7.5, "gra": 7.5}
+  criteria_speaking JSONB,       -- {"fc": 7.0, "lr": 8.0, "gra": 7.5, "pr": 7.5}
+  voice_feedback_url TEXT,       -- Ovozli feedback URL (Supabase Storage)
+  draft_feedback TEXT             -- Qoralama matni
 );
 
 -- Enable RLS (Row Level Security)

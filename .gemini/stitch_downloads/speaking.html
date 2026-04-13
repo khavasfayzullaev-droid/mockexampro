@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+
+<html lang="uz"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#f8f9fa",
+                        "on-primary-fixed": "#001a41",
+                        "inverse-primary": "#adc6ff",
+                        "error": "#ba1a1a",
+                        "on-background": "#191c1d",
+                        "primary-container": "#0070eb",
+                        "primary": "#0058bc",
+                        "on-tertiary-fixed": "#351000",
+                        "surface-container-highest": "#e1e3e4",
+                        "primary-fixed": "#d8e2ff",
+                        "surface-container": "#edeeef",
+                        "on-tertiary-fixed-variant": "#7c2e00",
+                        "inverse-surface": "#2e3132",
+                        "surface-container-low": "#f3f4f5",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e1e3e4",
+                        "outline": "#717786",
+                        "on-secondary-fixed": "#002107",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#414755",
+                        "surface-container-high": "#e7e8e9",
+                        "surface-dim": "#d9dadb",
+                        "on-tertiary-container": "#fffbff",
+                        "tertiary-fixed": "#ffdbcc",
+                        "tertiary-container": "#c64f00",
+                        "tertiary": "#9e3d00",
+                        "background": "#f8f9fa",
+                        "on-secondary-container": "#00732a",
+                        "outline-variant": "#c1c6d7",
+                        "secondary": "#006e28",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#00531c",
+                        "secondary-container": "#6ffb85",
+                        "on-surface": "#191c1d",
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f8f9fa",
+                        "secondary-fixed-dim": "#53e16f",
+                        "inverse-on-surface": "#f0f1f2",
+                        "secondary-fixed": "#72fe88",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb595",
+                        "on-primary-fixed-variant": "#004493",
+                        "surface-tint": "#005bc1",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#fefcff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .waveform-bar {
+            width: 3px;
+            background-color: #c1c6d7;
+            border-radius: 2px;
+            transition: height 0.2s ease;
+        }
+        .waveform-bar.active {
+            background-color: #0058bc;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-primary-fixed-dim">
+<nav class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl flex justify-between items-center px-8 h-16 shadow-[0_12px_32px_rgba(0,0,0,0.04)]">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold tracking-tight text-slate-900">Examiner Pro</span>
+<div class="hidden md:flex gap-6 ml-8">
+<a class="text-blue-600 font-semibold border-b-2 border-blue-600 body-md" href="#">Dashboard</a>
+<a class="text-slate-500 hover:text-slate-700 body-md transition-transform duration-200 hover:scale-105" href="#">Exams</a>
+<a class="text-slate-500 hover:text-slate-700 body-md transition-transform duration-200 hover:scale-105" href="#">Reports</a>
+<a class="text-slate-500 hover:text-slate-700 body-md transition-transform duration-200 hover:scale-105" href="#">Settings</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer p-2 hover:bg-surface-container rounded-full transition-all">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer p-2 hover:bg-surface-container rounded-full transition-all">help</span>
+<button class="bg-primary hover:scale-105 active:scale-95 transition-all text-white px-6 py-2 rounded-full font-medium shadow-lg shadow-primary/20">
+                Create Session
+            </button>
+<img alt="Teacher Profile" class="w-8 h-8 rounded-full bg-surface-container-high" data-alt="professional portrait of a teacher in a clean office environment with soft focus bookshelf background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCg7APwpDAXvJdTcMhmW0fzM1fqwVwylUjpYDiOM6gP7ita387_JRrFCyPV1hBF7sNfwywx6wqcz27S34qxK1Lc2fh1fvKYtzBIaRgoyo5a1cxJMxxYbNEw3cpa1Qtm9ACs2eCMbM8gSHqKfcYxViFnE4YQW2DclRrUtPgivawgl7Mc_Fvggym3Em-hq67Tvti4TSnM0iPhfwDplezfsEYEGejuiqFDi10NiyKmjKRAqVt3MvsluIuS4VeIdF35pap-ZlYANcMJZA"/>
+</div>
+</nav>
+<aside class="fixed left-0 h-full w-64 pt-20 bg-slate-50 border-r border-slate-100 flex flex-col z-40">
+<div class="px-6 mb-6">
+<h2 class="text-lg font-black text-blue-700 tracking-tight">Lucid Atelier</h2>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest font-semibold">Exam Grading Suite</p>
+</div>
+<div class="flex-1 overflow-y-auto px-2 space-y-1">
+<div class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold px-4 mb-2">Navigatsiya</div>
+<a class="flex items-center gap-3 px-4 py-3 text-blue-600 bg-white rounded-l-full shadow-sm font-semibold transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="label-md">Candidates</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-l-full transition-all" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="label-md">Scripts</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-l-full transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="label-md">Analytics</span>
+</a>
+<div class="mt-8 px-4">
+<div class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold mb-4">Navbatdagi O'quvchilar</div>
+<div class="space-y-4">
+<div class="flex items-center gap-3 p-2 bg-surface-container-lowest rounded-xl shadow-sm border border-transparent hover:border-primary-container transition-all cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center font-bold text-primary">AK</div>
+<div class="overflow-hidden">
+<p class="text-sm font-bold truncate">Anvar Karimov</p>
+<p class="text-[10px] text-on-surface-variant">ID: #88219</p>
+</div>
+</div>
+<div class="flex items-center gap-3 p-2 hover:bg-white rounded-xl transition-all cursor-pointer opacity-70">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center font-bold text-secondary">MS</div>
+<div class="overflow-hidden">
+<p class="text-sm font-medium truncate">Malika Sobirova</p>
+<p class="text-[10px] text-on-surface-variant">ID: #88220</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 mt-auto">
+<button class="w-full bg-primary-container text-white py-3 rounded-2xl flex items-center justify-center gap-2 font-semibold shadow-lg shadow-primary-container/20 hover:scale-[1.02] transition-transform">
+<span class="material-symbols-outlined">add</span>
+                Yangi vazifa
+            </button>
+<div class="mt-4 flex items-center gap-3 px-4 py-2 text-slate-500">
+<span class="material-symbols-outlined">contact_support</span>
+<span class="label-md">Yordam</span>
+</div>
+</div>
+</aside>
+<main class="ml-64 pt-20 px-8 pb-12 min-h-screen grid grid-cols-12 gap-8">
+<div class="col-span-8 space-y-8">
+<header class="flex justify-between items-end">
+<div>
+<div class="flex items-center gap-2 text-primary font-semibold mb-1">
+<span class="material-symbols-outlined text-sm">record_voice_over</span>
+<span>Speaking Imtihoni</span>
+</div>
+<h1 class="text-4xl font-black text-on-surface tracking-tighter">Anvar Karimov <span class="text-outline-variant font-light">/ #88219</span></h1>
+</div>
+<div class="flex gap-2">
+<span class="px-4 py-1.5 bg-surface-container-high text-on-surface-variant rounded-full text-xs font-bold uppercase tracking-widest">Mock IELTS</span>
+<span class="px-4 py-1.5 bg-secondary-container text-on-secondary-container rounded-full text-xs font-bold uppercase tracking-widest">Ongoing</span>
+</div>
+</header>
+<section class="space-y-6">
+<div class="bg-surface-container-low p-8 rounded-3xl space-y-8">
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<h3 class="text-xl font-bold flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center text-sm">1</span>
+                                Part 1: Introduction &amp; Interview
+                            </h3>
+<span class="text-sm font-medium text-on-surface-variant">04:12 daqiqa</span>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl flex items-center gap-6 shadow-sm border border-slate-50">
+<button class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+<div class="flex-1 h-12 flex items-center gap-1">
+<div class="waveform-bar active" style="height: 40%"></div>
+<div class="waveform-bar active" style="height: 60%"></div>
+<div class="waveform-bar active" style="height: 30%"></div>
+<div class="waveform-bar active" style="height: 80%"></div>
+<div class="waveform-bar active" style="height: 50%"></div>
+<div class="waveform-bar" style="height: 70%"></div>
+<div class="waveform-bar" style="height: 40%"></div>
+<div class="waveform-bar" style="height: 90%"></div>
+<div class="waveform-bar" style="height: 55%"></div>
+<div class="waveform-bar" style="height: 35%"></div>
+<div class="waveform-bar" style="height: 65%"></div>
+<div class="waveform-bar" style="height: 45%"></div>
+<div class="waveform-bar" style="height: 75%"></div>
+<div class="waveform-bar" style="height: 25%"></div>
+<div class="waveform-bar" style="height: 50%"></div>
+<div class="waveform-bar" style="height: 85%"></div>
+<div class="waveform-bar" style="height: 30%"></div>
+<div class="waveform-bar" style="height: 60%"></div>
+<div class="waveform-bar" style="height: 40%"></div>
+<div class="waveform-bar" style="height: 70%"></div>
+<div class="waveform-bar" style="height: 50%"></div>
+<div class="waveform-bar" style="height: 80%"></div>
+<div class="waveform-bar" style="height: 30%"></div>
+<div class="waveform-bar" style="height: 60%"></div>
+<div class="waveform-bar" style="height: 40%"></div>
+<div class="waveform-bar" style="height: 70%"></div>
+</div>
+<div class="flex items-center gap-4">
+<select class="bg-surface-container-high border-none rounded-lg text-xs font-bold focus:ring-2 focus:ring-primary-container/20">
+<option>1.0x</option>
+<option selected="">1.25x</option>
+<option>1.5x</option>
+</select>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">download</span>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<h3 class="text-xl font-bold flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center text-sm">2</span>
+                                Part 2: Long Turn (Cue Card)
+                            </h3>
+<span class="text-sm font-medium text-on-surface-variant">03:45 daqiqa</span>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl flex items-center gap-6 shadow-sm border border-slate-50">
+<button class="w-12 h-12 rounded-full bg-surface-container-high text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+<div class="flex-1 h-12 flex items-center gap-1 opacity-50">
+<div class="waveform-bar" style="height: 30%"></div>
+<div class="waveform-bar" style="height: 50%"></div>
+<div class="waveform-bar" style="height: 80%"></div>
+<div class="waveform-bar" style="height: 40%"></div>
+<div class="waveform-bar" style="height: 60%"></div>
+<div class="waveform-bar" style="height: 30%"></div>
+<div class="waveform-bar" style="height: 90%"></div>
+<div class="waveform-bar" style="height: 55%"></div>
+<div class="waveform-bar" style="height: 35%"></div>
+<div class="waveform-bar" style="height: 65%"></div>
+<div class="waveform-bar" style="height: 45%"></div>
+<div class="waveform-bar" style="height: 75%"></div>
+<div class="waveform-bar" style="height: 25%"></div>
+<div class="waveform-bar" style="height: 50%"></div>
+<div class="waveform-bar" style="height: 85%"></div>
+<div class="waveform-bar" style="height: 30%"></div>
+<div class="waveform-bar" style="height: 60%"></div>
+<div class="waveform-bar" style="height: 40%"></div>
+<div class="waveform-bar" style="height: 70%"></div>
+<div class="waveform-bar" style="height: 50%"></div>
+<div class="waveform-bar" style="height: 80%"></div>
+<div class="waveform-bar" style="height: 30%"></div>
+<div class="waveform-bar" style="height: 60%"></div>
+<div class="waveform-bar" style="height: 40%"></div>
+<div class="waveform-bar" style="height: 70%"></div>
+<div class="waveform-bar" style="height: 50%"></div>
+</div>
+<div class="flex items-center gap-4">
+<select class="bg-surface-container-high border-none rounded-lg text-xs font-bold">
+<option>1.0x</option>
+<option>1.25x</option>
+</select>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">download</span>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<h3 class="text-xl font-bold flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center text-sm">3</span>
+                                Part 3: Discussion
+                            </h3>
+<span class="text-sm font-medium text-on-surface-variant">05:20 daqiqa</span>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl flex items-center gap-6 shadow-sm border border-slate-50">
+<button class="w-12 h-12 rounded-full bg-surface-container-high text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+<div class="flex-1 h-12 flex items-center gap-1 opacity-50">
+<div class="waveform-bar" style="height: 40%"></div>
+<div class="waveform-bar" style="height: 70%"></div>
+<div class="waveform-bar" style="height: 20%"></div>
+<div class="waveform-bar" style="height: 85%"></div>
+<div class="waveform-bar" style="height: 45%"></div>
+<div class="waveform-bar" style="height: 65%"></div>
+<div class="waveform-bar" style="height: 35%"></div>
+<div class="waveform-bar" style="height: 95%"></div>
+<div class="waveform-bar" style="height: 55%"></div>
+<div class="waveform-bar" style="height: 25%"></div>
+<div class="waveform-bar" style="height: 75%"></div>
+<div class="waveform-bar" style="height: 45%"></div>
+<div class="waveform-bar" style="height: 65%"></div>
+<div class="waveform-bar" style="height: 15%"></div>
+<div class="waveform-bar" style="height: 50%"></div>
+<div class="waveform-bar" style="height: 80%"></div>
+<div class="waveform-bar" style="height: 30%"></div>
+<div class="waveform-bar" style="height: 60%"></div>
+<div class="waveform-bar" style="height: 40%"></div>
+<div class="waveform-bar" style="height: 70%"></div>
+<div class="waveform-bar" style="height: 50%"></div>
+<div class="waveform-bar" style="height: 80%"></div>
+<div class="waveform-bar" style="height: 30%"></div>
+<div class="waveform-bar" style="height: 60%"></div>
+<div class="waveform-bar" style="height: 40%"></div>
+<div class="waveform-bar" style="height: 70%"></div>
+</div>
+<div class="flex items-center gap-4">
+<select class="bg-surface-container-high border-none rounded-lg text-xs font-bold">
+<option>1.0x</option>
+<option>1.25x</option>
+</select>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">download</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<div class="col-span-4 space-y-6">
+<div class="bg-white p-6 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.02)] border border-slate-50 sticky top-24">
+<h4 class="text-lg font-bold mb-6 flex items-center justify-between">
+                    Baholash Mezonlari
+                    <span class="text-3xl font-black text-primary">7.5</span>
+</h4>
+<div class="space-y-8">
+<div class="space-y-3">
+<div class="flex justify-between text-sm font-bold">
+<span>Fluency &amp; Coherence (FC)</span>
+<span class="text-primary">7.0</span>
+</div>
+<input class="w-full h-2 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary" max="9" min="1" step="0.5" type="range" value="7"/>
+<p class="text-[11px] text-on-surface-variant italic">Gaplar orasidagi bog'liqlik va nutq ravonligi yaxshi.</p>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between text-sm font-bold">
+<span>Lexical Resource (LR)</span>
+<span class="text-primary">8.0</span>
+</div>
+<input class="w-full h-2 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary" max="9" min="1" step="0.5" type="range" value="8"/>
+<p class="text-[11px] text-on-surface-variant italic">Lug'at boyligi keng, akademik so'zlar qo'llanilgan.</p>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between text-sm font-bold">
+<span>Grammar Range (GRA)</span>
+<span class="text-primary">7.5</span>
+</div>
+<input class="w-full h-2 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary" max="9" min="1" step="0.5" type="range" value="7.5"/>
+<p class="text-[11px] text-on-surface-variant italic">Murakkab gap tuzilmalarida kichik xatolar bor.</p>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between text-sm font-bold">
+<span>Pronunciation (PR)</span>
+<span class="text-primary">7.5</span>
+</div>
+<input class="w-full h-2 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary" max="9" min="1" step="0.5" type="range" value="7.5"/>
+<p class="text-[11px] text-on-surface-variant italic">Intonatsiya va urg'u berish mahorati yuqori.</p>
+</div>
+</div>
+<div class="mt-10 space-y-4">
+<label class="text-sm font-bold block">O'qituvchi Feedbacki</label>
+<textarea class="w-full bg-surface-container-low border-none rounded-2xl text-sm p-4 focus:ring-2 focus:ring-primary-container/20 placeholder:text-on-surface-variant/50" placeholder="O'quvchiga tavsiyalaringizni yozing..." rows="4"></textarea>
+</div>
+<button class="w-full mt-6 py-4 rounded-full bg-gradient-to-r from-primary to-primary-container text-white font-bold text-lg shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                    Bahoni Yakunlash
+                </button>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-3xl border border-dashed border-outline-variant/30">
+<h5 class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4">Tezkor Eslatmalar</h5>
+<ul class="space-y-3">
+<li class="flex gap-3 text-xs">
+<span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+<span>Part 2 da 2 daqiqa to'liq gapirdi.</span>
+</li>
+<li class="flex gap-3 text-xs">
+<span class="material-symbols-outlined text-error text-sm">error</span>
+<span>"Third conditional" ishlatishda ikkilanishlar.</span>
+</li>
+</ul>
+</div>
+</div>
+</main>
+<div class="fixed bottom-0 left-64 right-0 h-1 bg-surface-container">
+<div class="h-full bg-primary w-2/3 shadow-[0_0_12px_rgba(0,88,188,0.4)]"></div>
+</div>
+</body></html>
