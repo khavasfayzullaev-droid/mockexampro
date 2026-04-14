@@ -1,56 +1,100 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import ConfirmModal from '@/components/ui/ConfirmModal';
+import { createClient } from '@/utils/supabase/client';
 
 export default function GroupDetailsPage() {
-  const params = useParams();
+  const { id } = useParams() as { id: string };
   const [copied, setCopied] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
-  const [studentToDelete, setStudentToDelete] = useState<number | null>(null);
+  const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
 
-  // Mock group data for UI demonstration
-  const groupData = {
-    title: "Matematika B1",
-    category: "MATEMATIKA",
-    joinCode: "MTH-B1-X92",
-    inviteLink: "https://mockexam.pro/join/MTH-B1-X92",
-  };
+  const [groupData, setGroupData] = useState<any>(null);
+  const [students, setStudents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [students, setStudents] = useState([
-    { id: 1, name: "Aliyev Vali", status: "Faol", score: 85, phone: "+998 90 123 45 67" },
-    { id: 2, name: "G'aniyev G'ani", status: "Faol", score: 72, phone: "+998 90 765 43 21" },
-    { id: 3, name: "Umarov Bobur", status: "Muzlatilgan", score: 0, phone: "+998 93 111 22 33" },
-  ]);
+  const supabase = createClient();
 
-  const confirmDeleteStudent = () => {
-    if (studentToDelete !== null) {
-      setStudents(students.filter(s => s.id !== studentToDelete));
-      setStudentToDelete(null);
+  useEffect(() => {
+    async function fetchGroupDetails() {
+      if (!id) return;
+      
+      const { data: groupReq } = await supabase
+        .from('groups')
+        .select('*')
+        .eq('id', id)
+        .single();
+        
+      if (groupReq) {
+        setGroupData({
+           title: groupReq.title,
+           category: groupReq.category,
+           joinCode: groupReq.invite_code,
+           inviteLink: `${window.location.origin}/join/${groupReq.invite_code}`
+        });
+      }
+
+      const { data: groupStudentsReq } = await supabase
+        .from('group_students')
+        .select(`
+          id,
+          student_id,
+          joined_at,
+          profiles ( display_name )
+        `)
+        .eq('group_id', id);
+
+      if (groupStudentsReq) {
+        setStudents(groupStudentsReq.map(st => ({
+          id: st.id,
+          student_id: st.student_id,
+          name: st.profiles?.display_name || "Noma'lum O'quvchi",
+          joined_at: st.joined_at
+        })));
+      }
+
+      setLoading(false);
+    }
+    fetchGroupDetails();
+  }, [id, supabase]);
+
+  const confirmDeleteStudent = async () => {
+    if (studentToDelete) {
+      try {
+        const { error } = await supabase.from('group_students').delete().eq('id', studentToDelete);
+        if (error) throw error;
+        
+        setStudents(students.filter(s => s.id !== studentToDelete));
+        setStudentToDelete(null);
+      } catch (err: any) {
+        alert("Xatolik: " + err.message);
+      }
     }
   };
 
-  const handleToggleFreeze = (id: number) => {
-    setStudents(students.map(s => {
-      if (s.id === id) {
-        return { ...s, status: s.status === "Faol" ? "Muzlatilgan" : "Faol" };
-      }
-      return s;
-    }));
-  };
-
   const copyLink = () => {
+    if (!groupData) return;
     navigator.clipboard.writeText(groupData.inviteLink);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const copyCode = () => {
+    if (!groupData) return;
     navigator.clipboard.writeText(groupData.joinCode);
     setCopiedCode(true);
     setTimeout(() => setCopiedCode(false), 2000);
   };
+
+  if (loading) {
+    return <div className="p-10 text-center font-bold text-primary">Yuklanmoqda...</div>;
+  }
+
+  if (!groupData) {
+    return <div className="p-10 text-center font-bold text-error">Guruh topilmadi!</div>;
+  }
 
   return (
     <div className="max-w-7xl mx-auto pt-2 animate-in fade-in duration-500 pb-12">
@@ -93,34 +137,25 @@ export default function GroupDetailsPage() {
                 {students.map(student => (
                   <div key={student.id} className="flex items-center justify-between p-4 rounded-xl border border-outline-variant/20 hover:border-outline-variant/40 hover:bg-surface-container-lowest transition-all group">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold font-headline">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold font-headline uppercase">
                         {student.name.charAt(0)}
                       </div>
                       <div>
                         <h4 className="font-headline font-bold text-on-surface text-base">{student.name}</h4>
-                        <p className="text-xs text-on-surface-variant font-medium mt-0.5">{student.phone}</p>
+                        <p className="text-xs text-on-surface-variant font-medium mt-0.5">Qo'shildi: {new Date(student.joined_at).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-6">
                       <div className="hidden sm:block text-right">
                         <p className="text-xs text-outline uppercase tracking-wider mb-0.5 font-bold">Holat</p>
-                        <span className={`text-xs font-bold px-2 py-1 rounded-md ${student.status === 'Faol' ? 'bg-success/10 text-success' : 'bg-outline-variant/20 text-outline'}`}>
-                          {student.status}
+                        <span className="text-xs font-bold px-2 py-1 rounded-md bg-success/10 text-success">
+                          Faol
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <button 
-                          onClick={() => handleToggleFreeze(student.id)}
-                          className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${student.status === 'Faol' ? 'hover:bg-outline-variant/20 text-outline' : 'hover:bg-success/20 text-success'}`}
-                          title={student.status === 'Faol' ? "Muzlatish" : "Faollashtirish"}
-                        >
-                          <span className="material-symbols-outlined text-[20px]">
-                            {student.status === 'Faol' ? 'ac_unit' : 'play_arrow'}
-                          </span>
-                        </button>
-                        <button 
                           onClick={() => setStudentToDelete(student.id)}
-                          className="w-9 h-9 rounded-lg hover:bg-error-container/50 text-error flex items-center justify-center transition-colors"
+                          className="w-10 h-10 rounded-xl hover:bg-error/10 text-error flex items-center justify-center transition-colors"
                           title="O'chirish"
                         >
                           <span className="material-symbols-outlined text-[20px]">person_remove</span>
@@ -209,6 +244,7 @@ export default function GroupDetailsPage() {
         message="Haqiqatan ham ushbu o'quvchini guruhdan butunlay o'chirishni xohlaysizmi? Uning barcha joriy natijalari o'chib ketadi."
         confirmText="Ha, o'chirilsin"
         cancelText="Bekor qilish"
+        isDestructive={true}
       />
     </div>
   );
