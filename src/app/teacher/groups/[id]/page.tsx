@@ -13,6 +13,8 @@ export default function GroupDetailsPage() {
 
   const [groupData, setGroupData] = useState<any>(null);
   const [students, setStudents] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<'students' | 'exams'>('students');
+  const [assignedExams, setAssignedExams] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const supabase = createClient();
@@ -53,6 +55,21 @@ export default function GroupDetailsPage() {
           name: st.profiles?.display_name || "Noma'lum O'quvchi",
           joined_at: st.joined_at
         })));
+      }
+
+      const { data: groupExamsReq } = await supabase
+        .from('group_exams')
+        .select(`
+          id,
+          exam_id,
+          assigned_at,
+          deadline,
+          exams ( title )
+        `)
+        .eq('group_id', id);
+
+      if (groupExamsReq) {
+         setAssignedExams(groupExamsReq);
       }
 
       setLoading(false);
@@ -112,59 +129,115 @@ export default function GroupDetailsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* Left Col: Students List (Empty State for now) */}
+        {/* Left Col: Dynamic Content based on Tabs */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-surface-container-lowest rounded-2xl p-6 md:p-8 shadow-[0_8px_24px_rgba(25,28,30,0.04)] border border-outline-variant/10">
-            <div className="flex items-center justify-between mb-8">
-               <h3 className="font-headline font-bold text-xl text-on-surface">O'quvchilar ro'yxati</h3>
-               <span className="bg-surface-container-high px-4 py-1.5 rounded-full text-sm font-semibold text-on-surface-variant">
-                 {students.length} kishi
-               </span>
+            {/* Tabs */}
+            <div className="flex border-b border-outline-variant/20 mb-8 gap-6">
+                <button 
+                  onClick={() => setActiveTab('students')}
+                  className={`pb-3 font-bold text-sm transition-colors border-b-2 ${activeTab === 'students' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+                >
+                    O'quvchilar ({students.length})
+                </button>
+                <button 
+                  onClick={() => setActiveTab('exams')}
+                  className={`pb-3 font-bold text-sm transition-colors border-b-2 ${activeTab === 'exams' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+                >
+                    Biriktirilgan Imtihonlar ({assignedExams.length})
+                </button>
             </div>
 
-            {students.length === 0 ? (
-              <div className="text-center py-16 px-4 bg-surface-container-lowest border-2 border-dashed border-outline-variant/30 rounded-2xl">
-                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="material-symbols-outlined text-4xl text-primary">person_add</span>
-                </div>
-                <h4 className="font-headline font-bold text-xl mb-3 text-on-surface">Hali o'quvchilar yo'q</h4>
-                <p className="text-on-surface-variant max-w-md mx-auto text-sm leading-relaxed mb-8">
-                  O'quvchilar ro'yxati bo'sh. O'ng tomondagi taklif kodini ulashish orqali guruhni shakllantiring.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {students.map(student => (
-                  <div key={student.id} className="flex items-center justify-between p-4 rounded-xl border border-outline-variant/20 hover:border-outline-variant/40 hover:bg-surface-container-lowest transition-all group">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold font-headline uppercase">
-                        {student.name.charAt(0)}
-                      </div>
-                      <div>
-                        <h4 className="font-headline font-bold text-on-surface text-base">{student.name}</h4>
-                        <p className="text-xs text-on-surface-variant font-medium mt-0.5">Qo'shildi: {new Date(student.joined_at).toLocaleDateString()}</p>
-                      </div>
+            {/* Content: Students */}
+            {activeTab === 'students' && (
+                <>
+                  {students.length === 0 ? (
+                    <div className="text-center py-16 px-4 bg-surface-container-lowest border-2 border-dashed border-outline-variant/30 rounded-2xl">
+                        <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span className="material-symbols-outlined text-4xl text-primary">person_add</span>
+                        </div>
+                        <h4 className="font-headline font-bold text-xl mb-3 text-on-surface">Hali o'quvchilar yo'q</h4>
+                        <p className="text-on-surface-variant max-w-md mx-auto text-sm leading-relaxed mb-8">
+                        O'quvchilar ro'yxati bo'sh. O'ng tomondagi taklif kodini ulashish orqali guruhni shakllantiring.
+                        </p>
                     </div>
-                    <div className="flex items-center gap-6">
-                      <div className="hidden sm:block text-right">
-                        <p className="text-xs text-outline uppercase tracking-wider mb-0.5 font-bold">Holat</p>
-                        <span className="text-xs font-bold px-2 py-1 rounded-md bg-success/10 text-success">
-                          Faol
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button 
-                          onClick={() => setStudentToDelete(student.id)}
-                          className="w-10 h-10 rounded-xl hover:bg-error/10 text-error flex items-center justify-center transition-colors"
-                          title="O'chirish"
-                        >
-                          <span className="material-symbols-outlined text-[20px]">person_remove</span>
-                        </button>
-                      </div>
+                    ) : (
+                    <div className="space-y-4">
+                        {students.map(student => (
+                        <div key={student.id} className="flex items-center justify-between p-4 rounded-xl border border-outline-variant/20 hover:border-outline-variant/40 hover:bg-surface-container-lowest transition-all group">
+                            <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold font-headline uppercase">
+                                {student.name.charAt(0)}
+                            </div>
+                            <div>
+                                <h4 className="font-headline font-bold text-on-surface text-base">{student.name}</h4>
+                                <p className="text-xs text-on-surface-variant font-medium mt-0.5">Qo'shildi: {new Date(student.joined_at).toLocaleDateString()}</p>
+                            </div>
+                            </div>
+                            <div className="flex items-center gap-6">
+                            <div className="hidden sm:block text-right">
+                                <p className="text-xs text-outline uppercase tracking-wider mb-0.5 font-bold">Holat</p>
+                                <span className="text-xs font-bold px-2 py-1 rounded-md bg-success/10 text-success">
+                                Faol
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button 
+                                onClick={() => setStudentToDelete(student.id)}
+                                className="w-10 h-10 rounded-xl hover:bg-error/10 text-error flex items-center justify-center transition-colors"
+                                title="O'chirish"
+                                >
+                                <span className="material-symbols-outlined text-[20px]">person_remove</span>
+                                </button>
+                            </div>
+                            </div>
+                        </div>
+                        ))}
                     </div>
-                  </div>
-                ))}
-              </div>
+                    )}
+                </>
+            )}
+
+            {/* Content: Exams */}
+            {activeTab === 'exams' && (
+                <>
+                  {assignedExams.length === 0 ? (
+                    <div className="text-center py-16 px-4 bg-surface-container-lowest border-2 border-dashed border-outline-variant/30 rounded-2xl">
+                        <div className="w-20 h-20 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span className="material-symbols-outlined text-4xl text-secondary">feed</span>
+                        </div>
+                        <h4 className="font-headline font-bold text-xl mb-3 text-on-surface">Imtihonlar biriktirilmagan</h4>
+                        <p className="text-on-surface-variant max-w-md mx-auto text-sm leading-relaxed mb-8">
+                           Guruhga imtihon berish uchun <b>Kutubxona</b> (My Exams) bo'limiga o'tib, u yerdan "Biriktirish" (Assign) tugmasidan foydalaning.
+                        </p>
+                        <Link href="/teacher/my-exams" className="bg-surface-container-high px-6 py-3 shadow-sm rounded-xl font-bold text-sm text-on-surface hover:bg-surface-container-highest transition-colors inline-block text-center mt-2">
+                           Kutubxonaga o'tish
+                        </Link>
+                    </div>
+                    ) : (
+                    <div className="space-y-4">
+                        {assignedExams.map(ae => (
+                        <div key={ae.id} className="flex items-center justify-between p-4 rounded-xl border border-outline-variant/20 hover:border-outline-variant/40 hover:bg-surface-container-lowest transition-all group">
+                            <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary font-bold">
+                                <span className="material-symbols-outlined">quiz</span>
+                            </div>
+                            <div>
+                                <h4 className="font-headline font-bold text-on-surface text-base">{ae.exams?.title || "Noma'lum Imtihon"}</h4>
+                                <p className="text-xs text-on-surface-variant font-medium mt-0.5">Berildi: {new Date(ae.assigned_at).toLocaleDateString()}</p>
+                            </div>
+                            </div>
+                            <div className="flex flex-col items-end gap-1">
+                                <p className="text-[10px] uppercase font-bold text-outline tracking-wider">Deadline</p>
+                                <p className="text-sm font-bold text-error">
+                                    {ae.deadline ? new Date(ae.deadline).toLocaleString() : 'Cheklanmagan'}
+                                </p>
+                            </div>
+                        </div>
+                        ))}
+                    </div>
+                    )}
+                </>
             )}
           </div>
         </div>
