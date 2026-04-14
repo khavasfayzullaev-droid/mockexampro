@@ -52,6 +52,30 @@ export default function AnalyticsPage() {
     loadData();
   }, [id, supabase]);
 
+  const exportToCsv = () => {
+    if (resultsList.length === 0) return;
+    
+    const headers = ['O\'quvchi', 'Topshirilgan Sana', 'Holati', 'Yakuniy Ball'];
+    const rows = resultsList.map(res => [
+      `"${res.profiles?.display_name || "Noma'lum O'quvchi"}"`,
+      `"${new Date(res.submitted_at).toLocaleString()}"`,
+      `"${res.status === 'pending' ? 'Kutuvda' : 'Tekshirilgan'}"`,
+      `"${res.overall_band || 0}"`
+    ]);
+
+    const csvContent = "\uFEFF" + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    
+    link.href = url;
+    link.setAttribute('download', `${exam?.title || 'Imtihon_Natijalari'}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (loading) {
     return <div className="p-10 font-bold text-center text-primary">Yuklanmoqda...</div>;
   }
@@ -76,7 +100,11 @@ export default function AnalyticsPage() {
           </div>
         </div>
         
-        <button className="flex items-center gap-2 bg-surface-container-highest px-4 py-2 rounded-xl text-sm font-bold text-on-surface hover:bg-surface-dim transition-colors">
+        <button 
+           onClick={exportToCsv}
+           disabled={resultsList.length === 0}
+           className="flex items-center gap-2 bg-surface-container-highest px-4 py-2 rounded-xl text-sm font-bold text-on-surface hover:bg-surface-dim transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
            <span className="material-symbols-outlined text-[18px]">download</span>
            Hisobotni yuklash (.csv)
         </button>

@@ -270,14 +270,28 @@ export default function GradingCenter() {
     try {
       const criteriaW = activeTab === 'writing' ? { ta: criteria.c1, cc: criteria.c2, lr: criteria.c3, gra: criteria.c4 } : submission?.criteria_writing;
       const criteriaS = activeTab === 'speaking' ? { fc: criteria.c1, lr: criteria.c2, gra: criteria.c3, pr: criteria.c4 } : submission?.criteria_speaking;
+      
+      const newScoreW = activeTab === 'writing' ? overall : Number(submission?.score_writing || 0);
+      const newScoreS = activeTab === 'speaking' ? overall : Number(submission?.score_speaking || 0);
+      const newScoreL = Number(listeningScore.band || submission?.score_listening || 0);
+      const newScoreR = Number(readingScore.band || submission?.score_reading || 0);
+      
+      const avgScore = (newScoreW + newScoreS + newScoreL + newScoreR) / 4;
+      
+      const whole = Math.floor(avgScore);
+      const fraction = avgScore - whole;
+      let finalOverall = whole;
+      if (fraction >= 0.75) finalOverall = whole + 1;
+      else if (fraction >= 0.25) finalOverall = whole + 0.5;
+
       const { error } = await supabase.from('results').update({
-        score_writing: activeTab === 'writing' ? overall : submission?.score_writing,
-        score_speaking: activeTab === 'speaking' ? overall : submission?.score_speaking,
-        score_listening: listeningScore.band || submission?.score_listening,
-        score_reading: readingScore.band || submission?.score_reading,
+        score_writing: newScoreW,
+        score_speaking: newScoreS,
+        score_listening: newScoreL,
+        score_reading: newScoreR,
         criteria_writing: criteriaW,
         criteria_speaking: criteriaS,
-        overall_band: overall,
+        overall_band: finalOverall,
         teacher_feedback: feedback,
         voice_feedback_url: voiceUrl,
         status: 'graded',
@@ -505,7 +519,9 @@ export default function GradingCenter() {
 
             {/* Band Score Card */}
             <div className="bg-gradient-to-br from-primary to-primary-container p-5 rounded-2xl text-white shadow-xl flex flex-col items-center">
-              <span className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">Umumiy Band</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">
+                 {activeTab === 'listening' ? 'Listening Band' : activeTab === 'reading' ? 'Reading Band' : activeTab === 'writing' ? 'Writing Band' : 'Speaking Band'}
+              </span>
               <div className="text-5xl font-black tracking-tighter">
                 {activeTab === 'listening' ? listeningScore.band.toFixed(1)
                   : activeTab === 'reading' ? readingScore.band.toFixed(1)

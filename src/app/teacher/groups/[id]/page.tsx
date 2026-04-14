@@ -91,6 +91,18 @@ export default function GroupDetailsPage() {
     }
   };
 
+  const unassignExam = async (aeId: string) => {
+    if (confirm("Bu imtihonni ushbu guruhdan olib tashlamoqchimisiz?")) {
+      try {
+        const { error } = await supabase.from('group_exams').delete().eq('id', aeId);
+        if (error) throw error;
+        setAssignedExams(assignedExams.filter(ae => ae.id !== aeId));
+      } catch (e: any) {
+        alert("Xatolik: " + e.message);
+      }
+    }
+  };
+
   const copyLink = () => {
     if (!groupData) return;
     navigator.clipboard.writeText(groupData.inviteLink);
@@ -227,11 +239,21 @@ export default function GroupDetailsPage() {
                                 <p className="text-xs text-on-surface-variant font-medium mt-0.5">Berildi: {new Date(ae.assigned_at).toLocaleDateString()}</p>
                             </div>
                             </div>
-                            <div className="flex flex-col items-end gap-1">
-                                <p className="text-[10px] uppercase font-bold text-outline tracking-wider">Deadline</p>
-                                <p className="text-sm font-bold text-error">
-                                    {ae.deadline ? new Date(ae.deadline).toLocaleString() : 'Cheklanmagan'}
-                                </p>
+                            <div className="flex items-center gap-4">
+                                <div className="flex flex-col items-end gap-1">
+                                    <p className="text-[10px] uppercase font-bold text-outline tracking-wider">Deadline</p>
+                                    <p className="text-sm font-bold text-error">
+                                        {ae.deadline ? new Date(ae.deadline).toLocaleString() : 'Cheklanmagan'}
+                                    </p>
+                                </div>
+                                <div className="w-px h-8 bg-outline-variant/20 hidden sm:block"></div>
+                                <button 
+                                   onClick={() => unassignExam(ae.id)}
+                                   className="w-10 h-10 rounded-xl text-error hover:bg-error/10 flex items-center justify-center transition-colors active:scale-95"
+                                   title="Bekor qilish"
+                                >
+                                   <span className="material-symbols-outlined text-[20px]">close</span>
+                                </button>
                             </div>
                         </div>
                         ))}
