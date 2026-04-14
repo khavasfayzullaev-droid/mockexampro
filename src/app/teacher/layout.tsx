@@ -77,22 +77,14 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
                    <p className="font-bold text-sm text-on-surface">{teacherName}</p>
                    <p className="text-xs text-on-surface-variant">O'qituvchi</p>
                 </div>
-                <Link href="#" className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-on-surface hover:bg-surface-container-highest transition-colors">
+                <Link href="/teacher/profile" className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-on-surface hover:bg-surface-container-highest transition-colors">
                    <span className="material-symbols-outlined text-[18px]">person</span>
                    Mening profilim
                 </Link>
-                <Link href="#" className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-on-surface hover:bg-surface-container-highest transition-colors">
+                <Link href="/teacher/settings" className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-on-surface hover:bg-surface-container-highest transition-colors">
                    <span className="material-symbols-outlined text-[18px]">settings</span>
                    Sozlamalar
                 </Link>
-                <div className="h-px bg-outline-variant/20 my-2 mx-4"></div>
-                <button 
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-error hover:bg-error/10 transition-colors text-left"
-                >
-                   <span className="material-symbols-outlined text-[18px]">logout</span>
-                   Tizimdan chiqish
-                </button>
              </div>
           )}
         </div>

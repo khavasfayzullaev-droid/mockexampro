@@ -1,8 +1,17 @@
+"use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
 export default function TeacherSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/login');
+  };
 
   const links = [
     { name: "Bosh sahifa", href: "/teacher", icon: "dashboard" },
@@ -13,7 +22,7 @@ export default function TeacherSidebar() {
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-full hidden lg:flex flex-col bg-slate-50 dark:bg-slate-900 font-manrope font-semibold tracking-tight h-screen w-64 border-r-0 z-50">
+    <aside className="fixed left-0 top-0 h-full hidden lg:flex flex-col bg-slate-50 dark:bg-slate-900 font-manrope font-semibold tracking-tight w-64 border-r-0 z-50">
       <div className="px-6 py-8">
         <Link href="/" className="text-xl font-bold text-blue-700 dark:text-blue-400">Mock Exam Pro</Link>
       </div>
@@ -38,7 +47,15 @@ export default function TeacherSidebar() {
         })}
       </nav>
 
-
+      <div className="p-4 pb-8 mb-safe mt-auto">
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-3 w-full px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition-colors text-left"
+        >
+          <span className="material-symbols-outlined text-[20px]">logout</span>
+          Tizimdan chiqish
+        </button>
+      </div>
     </aside>
   );
 }
