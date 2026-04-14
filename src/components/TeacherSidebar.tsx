@@ -38,15 +38,7 @@ export default function TeacherSidebar() {
         })}
       </nav>
 
-      <div className="p-6">
-        <div className="bg-surface-container-low rounded-xl p-4">
-          <p className="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2">Storage Usage</p>
-          <div className="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
-            <div className="h-full bg-primary w-3/4"></div>
-          </div>
-          <p className="text-[10px] mt-2 text-on-surface-variant">750MB / 1GB Exam Assets</p>
-        </div>
-      </div>
+
     </aside>
   );
 }
