@@ -52,7 +52,7 @@ export default function GroupDetailsPage() {
         setStudents(groupStudentsReq.map(st => ({
           id: st.id,
           student_id: st.student_id,
-          name: st.profiles?.display_name || "Noma'lum O'quvchi",
+          name: (st.profiles as any)?.display_name || "Noma'lum O'quvchi",
           joined_at: st.joined_at
         })));
       }
