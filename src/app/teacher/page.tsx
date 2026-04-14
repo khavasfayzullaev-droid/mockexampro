@@ -29,26 +29,53 @@ export default function TeacherDashboard() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      // Unumdorlik oshirildi:
+      // 1. Array countlarini SQL "count" orqali yuklamay xisoblaymiz.
+      // 2. pendingList uchun faqat oxirgi 20 ta yozuvni yuklab olamiz.
+      
+      const { count: pendingCount } = await supabase
+        .from('results')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'pending'); // actually needs join with exams table to filter by teacher_id
+
+      // A better way for teacher's results:
+      const { count: allPending } = await supabase
+        .from('results')
+        .select(`
+          id,
+          exams!inner(teacher_id)
+        `, { count: 'exact' })
+        .eq('status', 'pending')
+        .eq('exams.teacher_id', user.id);
+
+      const { count: allGraded } = await supabase
+        .from('results')
+        .select(`
+          id,
+          exams!inner(teacher_id)
+        `, { count: 'exact' })
+        .eq('status', 'graded')
+        .eq('exams.teacher_id', user.id);
+
+      // Faqatgina ekranda ko'rsatish uchun ro'yxat (limit 30)
       const { data: results, error } = await supabase
         .from('results')
         .select(`
           *,
-          profiles(*),
-          exams!inner(*)
+          profiles(display_name),
+          exams!inner(title, teacher_id)
         `)
-        .eq('exams.teacher_id', user.id);
+        .eq('exams.teacher_id', user.id)
+        .order('submitted_at', { ascending: false })
+        .limit(30);
 
       if (results) {
-        const pending = results.filter(r => r.status === 'pending');
-        const graded = results.filter(r => r.status === 'graded');
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        const recentSubmissions = results.filter(r => new Date(r.submitted_at) >= oneWeekAgo);
-        const uniqueRecentStudents = new Set(recentSubmissions.map(r => r.student_id)).size;
+        // Find unique active students from recent results
+        const uniqueRecentStudents = new Set(results.map(r => r.student_id)).size;
 
         setStats({
-          pendingTasks: pending.length,
-          gradedTasks: graded.length,
+          pendingTasks: allPending || 0,
+          gradedTasks: allGraded || 0,
           totalStudents: uniqueRecentStudents
         });
 
@@ -65,7 +92,13 @@ export default function TeacherDashboard() {
       if (filter === "Tekshirilgan" && task.status !== "graded") return false;
     }
     const studentName = task.profiles?.display_name || "";
-    if (search && !studentName.toLowerCase().includes(search.toLowerCase())) return false;
+    const examName = task.exams?.title || "";
+    const query = search.toLowerCase();
+    
+    // YAXSHILANISH: Ham o'quvchi ismi, ham imtihon nomidan izlaymiz
+    if (search && !((studentName.toLowerCase().includes(query)) || (examName.toLowerCase().includes(query)))) {
+      return false;
+    }
     return true;
   });
 
@@ -87,7 +120,7 @@ export default function TeacherDashboard() {
             <span className="text-xs font-label text-tertiary bg-tertiary-fixed px-2 py-1 rounded-full">{stats.pendingTasks} ta yangi</span>
           </div>
           <div className="mt-8">
-            <h3 className="text-on-surface-variant text-sm font-medium">Kutilayotganlar</h3>
+            <h3 className="text-on-surface-variant text-sm font-medium">Kutilayotganlar jami</h3>
             <p className="text-4xl font-headline font-extrabold mt-1">{stats.pendingTasks}</p>
           </div>
         </div>
@@ -97,7 +130,7 @@ export default function TeacherDashboard() {
             <div className="p-3 bg-primary/10 rounded-xl">
               <span className="material-symbols-outlined text-primary">groups</span>
             </div>
-            <span className="text-xs font-label text-primary bg-primary-fixed px-2 py-1 rounded-full">Oxirgi 7 kun</span>
+            <span className="text-xs font-label text-primary bg-primary-fixed px-2 py-1 rounded-full">Oxirgi ro'yxat</span>
           </div>
           <div className="mt-8">
             <h3 className="text-on-surface-variant text-sm font-medium">Faol o'quvchilar</h3>
@@ -113,7 +146,7 @@ export default function TeacherDashboard() {
             <span className="text-xs font-label text-secondary-fixed-dim bg-secondary-container px-2 py-1 rounded-full">Faol</span>
           </div>
           <div className="mt-8">
-            <h3 className="text-on-surface-variant text-sm font-medium">Tekshirilganlar</h3>
+            <h3 className="text-on-surface-variant text-sm font-medium">Tekshirilganlar jami</h3>
             <p className="text-4xl font-headline font-extrabold mt-1">{stats.gradedTasks}</p>
           </div>
         </div>
@@ -126,16 +159,17 @@ export default function TeacherDashboard() {
           {/* Submissions List */}
           <div className="w-full">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-              <h3 className="font-headline text-xl font-bold">Yaqinda topshirgan o'quvchilar</h3>
+              <h3 className="font-headline text-xl font-bold">So'nggi 30 ta natijalar</h3>
               <div className="flex items-center gap-3">
                  <div className="relative group">
                     <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg transition-colors group-focus-within:text-primary">search</span>
                     <input
                        type="text"
-                       placeholder="Izlash..."
+                       placeholder="O'quvchi yoki Imtihon..."
+                       title="Ism yoki imtihon nomidan izlang"
                        value={search}
                        onChange={(e) => setSearch(e.target.value)}
-                       className="bg-surface-container-lowest border border-outline-variant/30 px-4 py-2.5 pl-10 rounded-xl text-sm w-40 sm:w-64 outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-inter placeholder:text-on-surface-variant text-on-surface shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
+                       className="bg-surface-container-lowest border border-outline-variant/30 px-4 py-2.5 pl-10 rounded-xl text-sm w-48 sm:w-64 outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-inter placeholder:text-on-surface-variant text-on-surface shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
                     />
                  </div>
                  
@@ -169,7 +203,7 @@ export default function TeacherDashboard() {
                         {task.profiles?.display_name ? task.profiles.display_name.charAt(0) : "O'"}
                       </div>
                       <div>
-                        <p className="font-label text-[10px] uppercase tracking-wider text-on-surface-variant">{task.exams?.title || "Test"} • {new Date(task.submitted_at).toLocaleDateString()}</p>
+                        <p className="font-label text-[10px] uppercase tracking-wider text-on-surface-variant">{task.exams?.title || "Mock Test"} • {new Date(task.submitted_at).toLocaleDateString()}</p>
                         <h4 className="font-headline font-bold text-lg">{task.profiles?.display_name || "Noma'lum O'quvchi"}</h4>
                       </div>
                     </div>

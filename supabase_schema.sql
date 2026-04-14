@@ -90,6 +90,110 @@ CREATE POLICY "Public Read Access for Exam Assets"
   ON storage.objects FOR SELECT 
   USING (bucket_id = 'exam-assets');
 
+-- Grant public read access to everyone
+CREATE POLICY "Users can delete own avatar"
+    ON storage.objects FOR DELETE
+    USING (bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+-- ==========================================
+-- GROUPS SYSTEM
+-- ==========================================
+
+-- 5. Groups table
+CREATE TABLE public.groups (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  teacher_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  category TEXT,
+  invite_code TEXT UNIQUE,
+  indicator_color TEXT DEFAULT 'bg-primary',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable RLS for Groups
+ALTER TABLE public.groups ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Teachers can manage their own groups"
+  ON public.groups FOR ALL
+  USING (auth.uid() = teacher_id);
+
+CREATE POLICY "Anyone can view groups by invite code"
+  ON public.groups FOR SELECT
+  USING (true);
+
+-- 6. Group Students (Mapping table)
+CREATE TABLE public.group_students (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  group_id UUID REFERENCES public.groups(id) ON DELETE CASCADE,
+  student_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  joined_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(group_id, student_id)
+);
+
+-- Enable RLS for Group_Students
+ALTER TABLE public.group_students ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Teachers can view students in their groups"
+  ON public.group_students FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.groups
+      WHERE groups.id = group_students.group_id
+      AND groups.teacher_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Teachers can remove students from their groups"
+  ON public.group_students FOR DELETE
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.groups
+      WHERE groups.id = group_students.group_id
+      AND groups.teacher_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Students can view their own memberships"
+  ON public.group_students FOR SELECT
+  USING (auth.uid() = student_id);
+
+CREATE POLICY "Students can join groups"
+  ON public.group_students FOR INSERT
+  WITH CHECK (auth.uid() = student_id);
+
+-- 7. Group Exams (Assignments)
+CREATE TABLE public.group_exams (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  group_id UUID REFERENCES public.groups(id) ON DELETE CASCADE,
+  exam_id UUID REFERENCES public.exams(id) ON DELETE CASCADE,
+  deadline TIMESTAMP WITH TIME ZONE,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'completed')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable RLS for Group_Exams
+ALTER TABLE public.group_exams ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Teachers can manage exams in their groups"
+  ON public.group_exams FOR ALL
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.groups
+      WHERE groups.id = group_exams.group_id
+      AND groups.teacher_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Students can view exams in their groups"
+  ON public.group_exams FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.group_students
+      WHERE group_students.group_id = group_exams.group_id
+      AND group_students.student_id = auth.uid()
+    )
+  );
+
 -- Allow authenticated users (teachers) to upload files
 CREATE POLICY "Authenticated users can upload exam assets" 
   ON storage.objects FOR INSERT 
