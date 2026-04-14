@@ -5,11 +5,11 @@ export default function TeacherSidebar() {
   const pathname = usePathname();
 
   const links = [
-    { name: "Dashboard", href: "/teacher", icon: "dashboard" },
-    { name: "My Groups", href: "/teacher/groups", icon: "group" },
-    { name: "My Exams", href: "/teacher/my-exams", icon: "folder_open" },
-    { name: "Exam Constructor", href: "/teacher/exam-builder", icon: "edit_note" },
-    { name: "Grading Center", href: "/teacher/grading", icon: "fact_check" },
+    { name: "Bosh sahifa", href: "/teacher", icon: "dashboard" },
+    { name: "Guruhlarim", href: "/teacher/groups", icon: "group" },
+    { name: "Kutubxona", href: "/teacher/my-exams", icon: "folder_open" },
+    { name: "Test Konstruktori", href: "/teacher/exam-builder", icon: "edit_note" },
+    { name: "Baholash Markazi", href: "/teacher/grading", icon: "fact_check" },
   ];
 
   return (
